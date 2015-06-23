@@ -9,9 +9,9 @@ include_directories (${PCL_INCLUDE_DIRS})
 link_directories    (${PCL_LIBRARY_DIRS})
 add_definitions     (${PCL_DEFINITIONS})
 
-set  (project_SOURCES main.cpp pclviewer.cpp)
-set  (project_HEADERS pclviewer.h)
-set  (project_FORMS   pclviewer.ui)
+set  (project_SOURCES main.cpp pclviewer.cpp colordialog.cpp)
+set  (project_HEADERS pclviewer.h colordialog.h)
+set  (project_FORMS   pclviewer.ui colordialog.ui)
 set  (VTK_LIBRARIES   vtkRendering vtkGraphics vtkHybrid QVTK)
 
 QT4_WRAP_CPP (project_HEADERS_MOC   ${project_HEADERS})

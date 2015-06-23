@@ -1,11 +1,13 @@
 #include "pclviewer.h"
 #include "../build/ui_pclviewer.h"
 
+#include "colordialog.h"
+
 PCLViewer::PCLViewer (QWidget *parent) :
     QMainWindow (parent),
     ui (new Ui::PCLViewer),
     filtering_axis_ (1),  // = y
-    color_mode_ (4)  // = Rainbow
+    color_mode_ (4) // = Rainbow
 {
 
     ui->setupUi (this);
@@ -34,9 +36,10 @@ PCLViewer::PCLViewer (QWidget *parent) :
     viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
     ui->qvtkWidget->update ();
 
+    // Set up color mode dialog:
+    cdialog = new ColorDialog(this);
+
     // Connect "Load" and "Save" buttons and their functions
-    connect (ui->pushButton_load, SIGNAL(clicked ()), this, SLOT(loadFileButtonPressed ()));
-    connect (ui->pushButton_save, SIGNAL(clicked ()), this, SLOT(saveFileButtonPressed ()));
     connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
     connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
 
@@ -58,6 +61,9 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // Connet Help -> About
     connect(ui->action_About, SIGNAL(triggered()), this, SLOT(about()));
 
+    // connet View -> Color Mode
+    connect(ui->action_Color_Mode, SIGNAL(triggered()), this, SLOT(color_mode_dialog()));
+
     // Color the randomly generated cloud
     colorCloudDistances ();
     viewer_->addPointCloud (cloud_, "cloud");
@@ -67,7 +73,8 @@ PCLViewer::PCLViewer (QWidget *parent) :
 
 PCLViewer::~PCLViewer ()
 {
-  delete ui;
+    delete ui;
+    delete cdialog;
 }
 
 void PCLViewer::loadFileButtonPressed ()
@@ -139,60 +146,18 @@ void PCLViewer::saveFileButtonPressed ()
 
 void PCLViewer::axisChosen ()
 {
-  // Only 1 of the button can be checked at the time (mutual exclusivity) in a group of radio buttons
-  if (ui->radioButton_x->isChecked ())
-  {
-    PCL_INFO("x filtering chosen\n");
-    filtering_axis_ = 0;
-  }
-  else if (ui->radioButton_y->isChecked ())
-  {
-    PCL_INFO("y filtering chosen\n");
-    filtering_axis_ = 1;
-  }
-  else
-  {
-    PCL_INFO("z filtering chosen\n");
-    filtering_axis_ = 2;
-  }
-
-  colorCloudDistances ();
-  viewer_->updatePointCloud (cloud_, "cloud");
-  ui->qvtkWidget->update ();
+    filtering_axis_= cdialog -> get_color_changing_axis();
+    colorCloudDistances ();
+    viewer_->updatePointCloud (cloud_, "cloud");
+    ui->qvtkWidget->update ();
 }
 
 void PCLViewer::lookUpTableChosen ()
 {
-  // Only 1 of the button can be checked at the time (mutual exclusivity) in a group of radio buttons
-  if (ui->radioButton_BlueRed->isChecked ())
-  {
-    PCL_INFO("Blue -> Red LUT chosen\n");
-    color_mode_ = 0;
-  }
-  else if (ui->radioButton_GreenMagenta->isChecked ())
-  {
-    PCL_INFO("Green -> Magenta LUT chosen\n");
-    color_mode_ = 1;
-  }
-  else if (ui->radioButton_WhiteRed->isChecked ())
-  {
-    PCL_INFO("White -> Red LUT chosen\n");
-    color_mode_ = 2;
-  }
-  else if (ui->radioButton_GreyRed->isChecked ())
-  {
-    PCL_INFO("Grey / Red LUT chosen\n");
-    color_mode_ = 3;
-  }
-  else
-  {
-    PCL_INFO("Rainbow LUT chosen\n");
-    color_mode_ = 4;
-  }
-
-  colorCloudDistances ();
-  viewer_->updatePointCloud (cloud_, "cloud");
-  ui->qvtkWidget->update ();
+    color_mode_ = cdialog -> get_look_up_table();
+    colorCloudDistances ();
+    viewer_->updatePointCloud (cloud_, "cloud");
+    ui->qvtkWidget->update ();
 }
 
 void PCLViewer::colorCloudDistances () {
@@ -234,7 +199,7 @@ void PCLViewer::colorCloudDistances () {
         if (max < cloud_it->y)
           max = cloud_it->y;
         break;
-      default:  // z
+      default:  // zColorDialog* cdialog = new ColorDialog;
         if (min > cloud_it->z)
           min = cloud_it->z;
 
@@ -270,7 +235,7 @@ void PCLViewer::colorCloudDistances () {
     switch (color_mode_)
     {
       case 0:
-        // Blue (= min) -> Red (= max)
+        // Blue (= min) -> Red (= max)Ui_ColorDialog
         cloud_it->r = value;
         cloud_it->g = 0;
         cloud_it->b = 255 - value;
@@ -317,4 +282,8 @@ void PCLViewer::about() {
                    "<b>Author</b>: Yang Zhang <br>"
                    "<b>Email</b>: <a href='mailto:zy31415@gmail.com?Subject=About point cloud viewer' target='_top'>zy31415@gmail.com</a><br>");
     msgBox.exec();
+}
+
+void PCLViewer::color_mode_dialog() {
+    cdialog->show();
 }

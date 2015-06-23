@@ -13,11 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        pclviewer.cpp
+        pclviewer.cpp \
+    colordialog.cpp
 
-HEADERS  += pclviewer.h
+HEADERS  += pclviewer.h \
+    colordialog.h
 
-FORMS    += pclviewer.ui
+FORMS    += pclviewer.ui \
+    colordialog.ui
 
 RESOURCES += \
     resources.qrc

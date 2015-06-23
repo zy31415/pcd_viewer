@@ -20,6 +20,8 @@
 // Visualization Toolkit (VTK)
 #include <vtkRenderWindow.h>
 
+#include "colordialog.h"
+
 typedef pcl::PointXYZRGBA PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 
@@ -33,6 +35,8 @@ class PCLViewer : public QMainWindow {
 private:
     /** @brief ui pointer */
     Ui::PCLViewer *ui;
+
+    ColorDialog* cdialog;
 
 public:
     /** @brief Constructor */
@@ -56,6 +60,8 @@ public slots:
 
     /** @brief About the program.*/
     void about();
+
+    void color_mode_dialog();
 
 protected:
     /** @brief The PCL visualizer object */
