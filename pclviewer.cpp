@@ -39,22 +39,6 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // Set up color mode dialog:
     cdialog = new ColorDialog(this);
 
-    // Connect "Load" and "Save" buttons and their functions
-    connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
-    connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
-
-    // Connect X,Y,Z radio buttons and their functions
-    connect (ui->radioButton_x, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
-    connect (ui->radioButton_y, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
-    connect (ui->radioButton_z, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
-
-    connect (ui->radioButton_BlueRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-    connect (ui->radioButton_GreenMagenta, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-    connect (ui->radioButton_WhiteRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-    connect (ui->radioButton_GreyRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-    connect (ui->radioButton_Rainbow, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-
-
     // Connet File -> Close
     connect(ui->action_Close, SIGNAL(triggered()), this, SLOT(close()));
 

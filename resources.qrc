@@ -4,5 +4,6 @@
         <file>resources/Save-icon.png</file>
         <file>resources/Close-icon.png</file>
         <file>resources/About-icon.png</file>
+        <file>resources/Color-icon.png</file>
     </qresource>
 </RCC>
