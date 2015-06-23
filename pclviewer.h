@@ -89,7 +89,8 @@ protected:
      * @warning If there's an outlier in the data the color may seem uniform because of this outlier!
      * @note A boost rounding exception error will be thrown if used with a non dense point cloud
      */
-    void colorCloudDistances ();
+    void colorCloudDistances();
+    void updatePointCloud();
 
 };
 

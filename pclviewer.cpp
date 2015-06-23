@@ -7,22 +7,23 @@ PCLViewer::PCLViewer (QWidget *parent) :
     QMainWindow (parent),
     ui (new Ui::PCLViewer),
     filtering_axis_ (1),  // = y
-    color_mode_ (4) // = Rainbow
+    color_mode_ (4), // = Rainbow
+    cdialog(new ColorDialog(this))
 {
 
     ui->setupUi (this);
     this->setWindowTitle ("PCD viewer");
 
     // add status bar message
-    //statusBar()->showMessage("QSimulate has started");
+    ui->statusBar->showMessage("Open a .pcd file to start.");
 
     // Setup the cloud pointer
-    cloud_.reset (new PointCloudT);
+    cloud_.reset(new PointCloudT);
     // The number of points in the cloud
-    cloud_->resize (500);
+    cloud_->resize(500);
 
     // Fill the cloud with random points
-    for (size_t i = 0; i < cloud_->points.size (); ++i)
+    for (size_t i = 0; i < cloud_->points.size (); i++)
     {
     cloud_->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
     cloud_->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
@@ -36,8 +37,9 @@ PCLViewer::PCLViewer (QWidget *parent) :
     viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
     ui->qvtkWidget->update ();
 
-    // Set up color mode dialog:
-    cdialog = new ColorDialog(this);
+    // Connect "Load" and "Save" buttons and their functions
+    connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
+    connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
 
     // Connet File -> Close
     connect(ui->action_Close, SIGNAL(triggered()), this, SLOT(close()));
@@ -50,9 +52,9 @@ PCLViewer::PCLViewer (QWidget *parent) :
 
     // Color the randomly generated cloud
     colorCloudDistances ();
-    viewer_->addPointCloud (cloud_, "cloud");
-    viewer_->resetCamera ();
-    ui->qvtkWidget->update ();
+    viewer_->addPointCloud(cloud_, "cloud");
+    viewer_->resetCamera();
+    ui->qvtkWidget->update();
 }
 
 PCLViewer::~PCLViewer ()
@@ -64,7 +66,7 @@ PCLViewer::~PCLViewer ()
 void PCLViewer::loadFileButtonPressed ()
 {
   // You might want to change "/home/" if you're not on an *nix platform
-  QString filename = QFileDialog::getOpenFileName (this, tr ("Open point cloud"), "/home/", tr ("Point cloud data (*.pcd *.ply)"));
+  QString filename = QFileDialog::getOpenFileName (this, tr ("Open point cloud"), ".", tr ("Point cloud data (*.pcd *.ply)"));
 
   PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
   PointCloudT::Ptr cloud_tmp (new PointCloudT);
@@ -128,17 +130,17 @@ void PCLViewer::saveFileButtonPressed ()
   }
 }
 
-void PCLViewer::axisChosen ()
-{
+void PCLViewer::axisChosen() {
     filtering_axis_= cdialog -> get_color_changing_axis();
-    colorCloudDistances ();
-    viewer_->updatePointCloud (cloud_, "cloud");
-    ui->qvtkWidget->update ();
+    updatePointCloud();
 }
 
-void PCLViewer::lookUpTableChosen ()
-{
+void PCLViewer::lookUpTableChosen() {
     color_mode_ = cdialog -> get_look_up_table();
+    updatePointCloud();
+}
+
+void PCLViewer::updatePointCloud() {
     colorCloudDistances ();
     viewer_->updatePointCloud (cloud_, "cloud");
     ui->qvtkWidget->update ();
