@@ -315,7 +315,14 @@
     </property>
     <addaction name="action_About"/>
    </widget>
+   <widget class="QMenu" name="menu_Color_Mode">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="action_Color_Mode"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Color_Mode"/>
    <addaction name="menu_About"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -331,13 +338,14 @@
    <addaction name="action_Open"/>
    <addaction name="action_Save"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Open">
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/resources/Open-icon.png</normaloff>:/resources/Open-icon.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open</string>
+    <string>&amp;Open ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -370,10 +378,15 @@
      <normaloff>:/resources/Save-icon.png</normaloff>:/resources/Save-icon.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Save As</string>
+    <string>&amp;Save As ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_Color_Mode">
+   <property name="text">
+    <string>&amp;Color Mode ...</string>
    </property>
   </action>
  </widget>
