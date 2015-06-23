@@ -19,3 +19,7 @@ HEADERS  += pclviewer.h
 
 FORMS    += pclviewer.ui
 
+RESOURCES += \
+    resources.qrc
+
+

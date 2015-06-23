@@ -4,6 +4,7 @@
 // Qt
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QMessageBox>
 
 // Point Cloud Library
 #include <pcl/point_cloud.h>

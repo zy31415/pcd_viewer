@@ -20,9 +20,12 @@ QT4_WRAP_UI  (project_FORMS_HEADERS ${project_FORMS})
 INCLUDE         (${QT_USE_FILE})
 ADD_DEFINITIONS (${QT_DEFINITIONS})
 
+qt4_add_resources(UI_RESOURCES resources.qrc)
+
 ADD_EXECUTABLE  (colorize_cloud ${project_SOURCES}
                                 ${project_FORMS_HEADERS}
-                                ${project_HEADERS_MOC})
+                                ${project_HEADERS_MOC}
+								${UI_RESOURCES})
 
 TARGET_LINK_LIBRARIES (colorize_cloud ${QT_LIBRARIES} ${PCL_LIBRARIES} ${VTK_LIBRARIES})
 

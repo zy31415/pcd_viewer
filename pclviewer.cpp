@@ -7,49 +7,62 @@ PCLViewer::PCLViewer (QWidget *parent) :
     filtering_axis_ (1),  // = y
     color_mode_ (4)  // = Rainbow
 {
-  ui->setupUi (this);
-  this->setWindowTitle ("PCL viewer");
 
-  // Setup the cloud pointer
-  cloud_.reset (new PointCloudT);
-  // The number of points in the cloud
-  cloud_->resize (500);
+    ui->setupUi (this);
+    this->setWindowTitle ("PCD viewer");
 
-  // Fill the cloud with random points
-  for (size_t i = 0; i < cloud_->points.size (); ++i)
-  {
+    // add status bar message
+    //statusBar()->showMessage("QSimulate has started");
+
+    // Setup the cloud pointer
+    cloud_.reset (new PointCloudT);
+    // The number of points in the cloud
+    cloud_->resize (500);
+
+    // Fill the cloud with random points
+    for (size_t i = 0; i < cloud_->points.size (); ++i)
+    {
     cloud_->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
     cloud_->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
     cloud_->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
-  }
+    }
 
-  // Set up the QVTK window
-  viewer_.reset (new pcl::visualization::PCLVisualizer ("viewer", false));
-  viewer_->setBackgroundColor (0.1, 0.1, 0.1);
-  ui->qvtkWidget->SetRenderWindow (viewer_->getRenderWindow ());
-  viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
-  ui->qvtkWidget->update ();
+    // Set up the QVTK window
+    viewer_.reset (new pcl::visualization::PCLVisualizer ("viewer", false));
+    viewer_->setBackgroundColor (0.1, 0.1, 0.1);
+    ui->qvtkWidget->SetRenderWindow (viewer_->getRenderWindow ());
+    viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
+    ui->qvtkWidget->update ();
 
-  // Connect "Load" and "Save" buttons and their functions
-  connect (ui->pushButton_load, SIGNAL(clicked ()), this, SLOT(loadFileButtonPressed ()));
-  connect (ui->pushButton_save, SIGNAL(clicked ()), this, SLOT(saveFileButtonPressed ()));
+    // Connect "Load" and "Save" buttons and their functions
+    connect (ui->pushButton_load, SIGNAL(clicked ()), this, SLOT(loadFileButtonPressed ()));
+    connect (ui->pushButton_save, SIGNAL(clicked ()), this, SLOT(saveFileButtonPressed ()));
+    connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
+    connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
 
-  // Connect X,Y,Z radio buttons and their functions
-  connect (ui->radioButton_x, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
-  connect (ui->radioButton_y, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
-  connect (ui->radioButton_z, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
+    // Connect X,Y,Z radio buttons and their functions
+    connect (ui->radioButton_x, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
+    connect (ui->radioButton_y, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
+    connect (ui->radioButton_z, SIGNAL(clicked ()), this, SLOT(axisChosen ()));
 
-  connect (ui->radioButton_BlueRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-  connect (ui->radioButton_GreenMagenta, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-  connect (ui->radioButton_WhiteRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-  connect (ui->radioButton_GreyRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
-  connect (ui->radioButton_Rainbow, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
+    connect (ui->radioButton_BlueRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
+    connect (ui->radioButton_GreenMagenta, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
+    connect (ui->radioButton_WhiteRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
+    connect (ui->radioButton_GreyRed, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
+    connect (ui->radioButton_Rainbow, SIGNAL(clicked ()), this, SLOT(lookUpTableChosen()));
 
-  // Color the randomly generated cloud
-  colorCloudDistances ();
-  viewer_->addPointCloud (cloud_, "cloud");
-  viewer_->resetCamera ();
-  ui->qvtkWidget->update ();
+
+    // Connet File -> Close
+    connect(ui->action_Close, SIGNAL(triggered()), this, SLOT(close()));
+
+    // Connet Help -> About
+    connect(ui->action_About, SIGNAL(triggered()), this, SLOT(about()));
+
+    // Color the randomly generated cloud
+    colorCloudDistances ();
+    viewer_->addPointCloud (cloud_, "cloud");
+    viewer_->resetCamera ();
+    ui->qvtkWidget->update ();
 }
 
 PCLViewer::~PCLViewer ()
@@ -57,8 +70,7 @@ PCLViewer::~PCLViewer ()
   delete ui;
 }
 
-void
-PCLViewer::loadFileButtonPressed ()
+void PCLViewer::loadFileButtonPressed ()
 {
   // You might want to change "/home/" if you're not on an *nix platform
   QString filename = QFileDialog::getOpenFileName (this, tr ("Open point cloud"), "/home/", tr ("Point cloud data (*.pcd *.ply)"));
@@ -97,8 +109,7 @@ PCLViewer::loadFileButtonPressed ()
   ui->qvtkWidget->update ();
 }
 
-void
-PCLViewer::saveFileButtonPressed ()
+void PCLViewer::saveFileButtonPressed ()
 {
   // You might want to change "/home/" if you're not on an *nix platform
   QString filename = QFileDialog::getSaveFileName(this, tr ("Open point cloud"), "/home/", tr ("Point cloud data (*.pcd *.ply)"));
@@ -126,8 +137,7 @@ PCLViewer::saveFileButtonPressed ()
   }
 }
 
-void
-PCLViewer::axisChosen ()
+void PCLViewer::axisChosen ()
 {
   // Only 1 of the button can be checked at the time (mutual exclusivity) in a group of radio buttons
   if (ui->radioButton_x->isChecked ())
@@ -151,8 +161,7 @@ PCLViewer::axisChosen ()
   ui->qvtkWidget->update ();
 }
 
-void
-PCLViewer::lookUpTableChosen ()
+void PCLViewer::lookUpTableChosen ()
 {
   // Only 1 of the button can be checked at the time (mutual exclusivity) in a group of radio buttons
   if (ui->radioButton_BlueRed->isChecked ())
@@ -303,5 +312,9 @@ void PCLViewer::colorCloudDistances () {
 }
 
 void PCLViewer::about() {
-
+    QMessageBox msgBox;
+    msgBox.setText("This is a poit cloud file GUI viewer.<br>"
+                   "<b>Author</b>: Yang Zhang <br>"
+                   "<b>Email</b>: <a href='mailto:zy31415@gmail.com?Subject=About point cloud viewer' target='_top'>zy31415@gmail.com</a><br>");
+    msgBox.exec();
 }
