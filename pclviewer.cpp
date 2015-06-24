@@ -8,7 +8,9 @@ PCLViewer::PCLViewer (QWidget *parent) :
     ui (new Ui::PCLViewer),
     filtering_axis_ (1),  // = y
     color_mode_ (4), // = Rainbow
-    cdialog(new ColorDialog(this))
+    cdialog(new ColorDialog(this)),
+    cloud_(new pcl::PointCloud<pcl::PointXYZRGBA>),
+    triangulationDialog_(new TriangulationDialog(this))
 {
 
     ui->setupUi (this);
@@ -18,7 +20,7 @@ PCLViewer::PCLViewer (QWidget *parent) :
     ui->statusBar->showMessage("Open a .pcd file to start.");
 
     // Setup the cloud pointer
-    cloud_.reset(new PointCloudT);
+    //cloud_.reset(new pcl::PointCloud<pcl::PointXYZRGBA>);
     // The number of points in the cloud
     cloud_->resize(500);
 
@@ -31,11 +33,7 @@ PCLViewer::PCLViewer (QWidget *parent) :
     }
 
     // Set up the QVTK window
-    viewer_.reset (new pcl::visualization::PCLVisualizer ("viewer", false));
-    viewer_->setBackgroundColor (0.1, 0.1, 0.1);
-    ui->qvtkWidget->SetRenderWindow (viewer_->getRenderWindow ());
-    viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
-    ui->qvtkWidget->update ();
+    setUpQVTKWindow();
 
     // Connect "Load" and "Save" buttons and their functions
     connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
@@ -50,6 +48,9 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // connet View -> Color Mode
     connect(ui->action_Color_Mode, SIGNAL(triggered()), this, SLOT(color_mode_dialog()));
 
+    // connet View -> Triangulation
+    connect(ui->action_Triangulation, SIGNAL(triggered()), this, SLOT(onTriangulation()));
+
     // Color the randomly generated cloud
     colorCloudDistances ();
     viewer_->addPointCloud(cloud_, "cloud");
@@ -61,45 +62,56 @@ PCLViewer::~PCLViewer ()
 {
     delete ui;
     delete cdialog;
+    delete triangulationDialog_;
+}
+
+void PCLViewer::setUpQVTKWindow() {
+    viewer_.reset (new pcl::visualization::PCLVisualizer ("viewer", false));
+    viewer_->setBackgroundColor (0.2, 0.2, 0.2);
+    ui->qvtkWidget->SetRenderWindow (viewer_->getRenderWindow ());
+    viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
+    ui->qvtkWidget->update ();
 }
 
 void PCLViewer::loadFileButtonPressed ()
 {
-  // You might want to change "/home/" if you're not on an *nix platform
-  QString filename = QFileDialog::getOpenFileName (this, tr ("Open point cloud"), ".", tr ("Point cloud data (*.pcd *.ply)"));
+    QString filename = QFileDialog::getOpenFileName (this, tr ("Open point cloud"), ".", tr ("Point cloud data (*.pcd *.ply)"));
 
-  PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
-  PointCloudT::Ptr cloud_tmp (new PointCloudT);
+    PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_tmp (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
-  if (filename.isEmpty ())
+    if (filename.isEmpty ())
     return;
 
-  int return_status;
-  if (filename.endsWith (".pcd", Qt::CaseInsensitive))
+    int return_status;
+    if (filename.endsWith (".pcd", Qt::CaseInsensitive))
     return_status = pcl::io::loadPCDFile (filename.toStdString (), *cloud_tmp);
-  else
+    else
     return_status = pcl::io::loadPLYFile (filename.toStdString (), *cloud_tmp);
 
-  if (return_status != 0)
-  {
+    if (return_status != 0)
+    {
     PCL_ERROR("Error reading point cloud %s\n", filename.toStdString ().c_str ());
     return;
-  }
+    }
 
-  // If point cloud contains NaN values, remove them before updating the visualizer point cloud
-  if (cloud_tmp->is_dense)
+    // If point cloud contains NaN values, remove them before updating the visualizer point cloud
+    if (cloud_tmp->is_dense)
     pcl::copyPointCloud (*cloud_tmp, *cloud_);
-  else
-  {
+    else
+    {
     PCL_WARN("Cloud is not dense! Non finite points will be removed\n");
     std::vector<int> vec;
     pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
-  }
+    }
 
-  colorCloudDistances ();
-  viewer_->updatePointCloud (cloud_, "cloud");
-  viewer_->resetCamera ();
-  ui->qvtkWidget->update ();
+    colorCloudDistances ();
+
+    clearViewer();
+
+    viewer_->addPointCloud (cloud_, "cloud");
+    viewer_->resetCamera ();
+    ui->qvtkWidget->update ();
 }
 
 void PCLViewer::saveFileButtonPressed ()
@@ -167,7 +179,9 @@ void PCLViewer::colorCloudDistances () {
   }
 
   // Search for the minimum/maximum
-  for (PointCloudT::iterator cloud_it = cloud_->begin (); cloud_it != cloud_->end (); ++cloud_it)
+  for (pcl::PointCloud<pcl::PointXYZRGBA>::iterator cloud_it = cloud_->begin ();
+       cloud_it != cloud_->end ();
+       cloud_it++)
   {
     switch (filtering_axis_)
     {
@@ -201,7 +215,9 @@ void PCLViewer::colorCloudDistances () {
   if (min == max)  // In case the cloud is flat on the chosen direction (x,y or z)
     lut_scale = 1.0;  // Avoid rounding error in boost
 
-  for (PointCloudT::iterator cloud_it = cloud_->begin (); cloud_it != cloud_->end (); ++cloud_it)
+  for (pcl::PointCloud<pcl::PointXYZRGBA>::iterator cloud_it = cloud_->begin ();
+       cloud_it != cloud_->end ();
+       cloud_it++)
   {
     int value;
     switch (filtering_axis_)
@@ -273,3 +289,40 @@ void PCLViewer::about() {
 void PCLViewer::color_mode_dialog() {
     cdialog->show();
 }
+
+void PCLViewer::removePointsCloudFromView() {
+    viewer_->removePointCloud("cloud");
+    ui->qvtkWidget->update();
+}
+
+void PCLViewer::addPointsCloudToView() {
+    viewer_->addPointCloud(cloud_, "cloud");
+    ui->qvtkWidget->update();
+}
+
+void PCLViewer::onTriangulation(){
+    triangulationDialog_->show();
+}
+
+void PCLViewer::update() {
+    ui->qvtkWidget->update();
+}
+
+pcl::PointCloud<pcl::PointXYZRGBA>::Ptr PCLViewer::getPointsData() {
+    return cloud_;
+}
+
+boost::shared_ptr<pcl::visualization::PCLVisualizer> PCLViewer::getViewer() {
+    return viewer_;
+}
+
+void PCLViewer::clearViewer() {
+    viewer_->removeAllShapes();
+    viewer_->removeAllPointClouds();
+
+    triangulationDialog_->close();
+    delete triangulationDialog_;
+    triangulationDialog_ = new TriangulationDialog(this);
+
+}
+

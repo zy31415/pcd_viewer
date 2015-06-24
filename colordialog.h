@@ -19,6 +19,9 @@ public:
 
     int get_color_changing_axis();
     int get_look_up_table();
+
+public slots:
+    void onIfShowDataPoints();
 };
 
 #endif // COLORDIALOG_H

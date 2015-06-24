@@ -8,19 +8,22 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = colorize_cloud
+TARGET = pcd_viewer
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
         pclviewer.cpp \
-    colordialog.cpp
+    colordialog.cpp \
+    triangulationdialog.cpp
 
 HEADERS  += pclviewer.h \
-    colordialog.h
+    colordialog.h \
+    triangulationdialog.h
 
 FORMS    += pclviewer.ui \
-    colordialog.ui
+    colordialog.ui \
+    triangulationdialog.ui
 
 RESOURCES += \
     resources.qrc

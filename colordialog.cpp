@@ -3,6 +3,8 @@
 #include "colordialog.h"
 #include "../build/ui_colordialog.h"
 
+#include "pclviewer.h"
+
 ColorDialog::ColorDialog(QWidget *parent) :
     QDialog(parent),
     cdialog(new Ui::ColorDialog)
@@ -19,6 +21,9 @@ ColorDialog::ColorDialog(QWidget *parent) :
     connect (cdialog -> radioButton_WhiteRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
     connect (cdialog -> radioButton_GreyRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
     connect (cdialog -> radioButton_Rainbow_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
+
+    connect (cdialog -> checkBox, SIGNAL(toggled(bool)), this, SLOT(onIfShowDataPoints()));
+
 
 }
 
@@ -68,4 +73,11 @@ int ColorDialog::get_look_up_table() {
 
     PCL_INFO("Rainbow LUT chosen\n");
     return 4;
+}
+
+void ColorDialog::onIfShowDataPoints() {
+    if (cdialog->checkBox->isChecked())
+        ((PCLViewer*)parentWidget())->addPointsCloudToView();
+    else
+        ((PCLViewer*)parentWidget())->removePointsCloudFromView();
 }

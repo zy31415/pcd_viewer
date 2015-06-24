@@ -6,9 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>371</width>
-    <height>198</height>
+    <width>369</width>
+    <height>210</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>369</width>
+    <height>210</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>369</width>
+    <height>210</height>
+   </size>
   </property>
   <property name="contextMenuPolicy">
    <enum>Qt::PreventContextMenu</enum>
@@ -16,12 +34,15 @@
   <property name="windowTitle">
    <string>Color Model Dialog</string>
   </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
   <widget class="QGroupBox" name="groupBox_Axis">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>10</y>
-     <width>161</width>
+     <x>20</x>
+     <y>90</y>
+     <width>160</width>
      <height>81</height>
     </rect>
    </property>
@@ -130,10 +151,10 @@
   <widget class="QGroupBox" name="groupBox_ColorMode">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>200</x>
      <y>10</y>
      <width>161</width>
-     <height>180</height>
+     <height>151</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -267,8 +288,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>150</y>
+     <x>120</x>
+     <y>170</y>
      <width>99</width>
      <height>27</height>
     </rect>
@@ -277,10 +298,29 @@
     <string>&amp;OK</string>
    </property>
   </widget>
-  <zorder>groupBox_Axis</zorder>
-  <zorder>groupBox_ColorMode</zorder>
-  <zorder>pushButton</zorder>
-  <zorder>radioButton_BlueRed_2</zorder>
+  <widget class="QCheckBox" name="checkBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>141</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Show points</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>

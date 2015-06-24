@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>896</width>
-    <height>563</height>
+    <height>585</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -85,6 +85,7 @@
      <string>&amp;View</string>
     </property>
     <addaction name="action_Color_Mode"/>
+    <addaction name="action_Triangulation"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Color_Mode"/>
@@ -159,12 +160,18 @@
     <string>&amp;Color Mode ...</string>
    </property>
   </action>
+  <action name="action_Triangulation">
+   <property name="text">
+    <string>&amp;Triangulation Settings</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>QVTKWidget</class>
    <extends>QWidget</extends>
    <header>QVTKWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

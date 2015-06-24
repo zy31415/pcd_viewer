@@ -20,10 +20,12 @@
 // Visualization Toolkit (VTK)
 #include <vtkRenderWindow.h>
 
+// this project
 #include "colordialog.h"
+#include "triangulationdialog.h"
 
-typedef pcl::PointXYZRGBA PointT;
-typedef pcl::PointCloud<PointT> PointCloudT;
+// typedef pcl::PointXYZRGBA PointT;
+// typedef pcl::PointCloud<pcl::PointXYZRGBA> PointCloudT;
 
 namespace Ui {
   class PCLViewer;
@@ -36,7 +38,18 @@ private:
     /** @brief ui pointer */
     Ui::PCLViewer *ui;
 
+    /** @brief The PCL visualizer object */
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_;
+
+    /** @brief The point cloud displayed */
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_;
+
     ColorDialog* cdialog;
+    TriangulationDialog* triangulationDialog_;
+
+    void setUpQVTKWindow(void);
+
+    void clearViewer();
 
 public:
     /** @brief Constructor */
@@ -44,6 +57,11 @@ public:
 
     /** @brief Destructor */
     ~PCLViewer ();
+
+    void removePointsCloudFromView();
+    void addPointsCloudToView();
+    void addMeshes();
+    void update();
 
 public slots:
     /** @brief Triggered whenever the "Save file" button is clicked */
@@ -63,13 +81,14 @@ public slots:
 
     void color_mode_dialog();
 
+    void onTriangulation();
+
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr getPointsData();
+
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> getViewer();
+
+
 protected:
-    /** @brief The PCL visualizer object */
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_;
-
-    /** @brief The point cloud displayed */
-    PointCloudT::Ptr cloud_;
-
     /** @brief 0 = x | 1 = y | 2 = z */
     int filtering_axis_;
 

@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6 FATAL_ERROR)
 
-project      (pcl-colorize_cloud)
+project      (pcd_viewer)
 find_package (Qt4 REQUIRED)
 find_package (VTK REQUIRED)
 find_package (PCL 1.7.1 REQUIRED)
@@ -9,9 +9,9 @@ include_directories (${PCL_INCLUDE_DIRS})
 link_directories    (${PCL_LIBRARY_DIRS})
 add_definitions     (${PCL_DEFINITIONS})
 
-set  (project_SOURCES main.cpp pclviewer.cpp colordialog.cpp)
-set  (project_HEADERS pclviewer.h colordialog.h)
-set  (project_FORMS   pclviewer.ui colordialog.ui)
+set  (project_SOURCES main.cpp pclviewer.cpp colordialog.cpp triangulationdialog.cpp)
+set  (project_HEADERS pclviewer.h colordialog.h triangulationdialog.h)
+set  (project_FORMS   pclviewer.ui colordialog.ui triangulationdialog.ui)
 set  (VTK_LIBRARIES   vtkRendering vtkGraphics vtkHybrid QVTK)
 
 QT4_WRAP_CPP (project_HEADERS_MOC   ${project_HEADERS})
@@ -22,10 +22,10 @@ ADD_DEFINITIONS (${QT_DEFINITIONS})
 
 qt4_add_resources(UI_RESOURCES resources.qrc)
 
-ADD_EXECUTABLE  (colorize_cloud ${project_SOURCES}
+ADD_EXECUTABLE  (pcd_viewer ${project_SOURCES}
                                 ${project_FORMS_HEADERS}
                                 ${project_HEADERS_MOC}
 								${UI_RESOURCES})
 
-TARGET_LINK_LIBRARIES (colorize_cloud ${QT_LIBRARIES} ${PCL_LIBRARIES} ${VTK_LIBRARIES})
+TARGET_LINK_LIBRARIES (pcd_viewer ${QT_LIBRARIES} ${PCL_LIBRARIES} ${VTK_LIBRARIES})
 
