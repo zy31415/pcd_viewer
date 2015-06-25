@@ -17,7 +17,8 @@ PCLViewer::PCLViewer (QWidget *parent) :
     cdialog(new ColorDialog(this)),
     triangulationDialog_(new TriangulationDialog(this)),
     td_(new TourDialog(this)),
-    cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
+    cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>),
+    alpha(0.)
 {
 
     ui->setupUi (this);
@@ -230,7 +231,7 @@ void PCLViewer::colorCloudDistances () {
         // Grey (< 128) / Red (> 128)
         if (value > 128)
         {
-          cloud_it->r = 255;
+          cloud_it->r = 255;http://stackoverflow.com/questions/13184555/creating-a-qwidget-in-a-non-gui-thread
           cloud_it->g = 0;
           cloud_it->b = 0;
         }
@@ -297,22 +298,37 @@ void PCLViewer::onTour() {
 
 
 void PCLViewer::onButtonClicked() {
-    QThread* thread_ = new QThread;
+    double pos_x, pos_y, pos_z,
+            view_x, view_y, view_z,
+            up_x, up_y, up_z;
 
-    Worker* worker_ = new Worker(this);
-    worker_->setViewer(viewer_);
-    worker_->setBoundingBox(bb);
 
-    worker_->moveToThread(thread_);
+    std::vector<pcl::visualization::Camera> cameras;
+    viewer_ -> getCameras(cameras);
 
-    connect(worker_, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(thread_, SIGNAL(started()), worker_, SLOT(process()));
-    connect(worker_, SIGNAL(finished()), thread_, SLOT(quit()));
-    connect(worker_, SIGNAL(finished()), worker_, SLOT(deleteLater()));
-    connect(thread_, SIGNAL(finished()), thread_, SLOT(deleteLater()));
 
-    thread_->start();
-    thread_->wait();
+    pos_x = cameras[0].pos[0];
+    pos_y = cameras[0].pos[1];
+    pos_z = cameras[0].pos[2];
 
-    //viewer_->spinOnce(100, true);
+    view_x = cameras[0].focal[0];
+    view_y = cameras[0].focal[1];
+    view_z = cameras[0].focal[2];
+
+    up_x = cameras[0].view[0];
+    up_y = cameras[0].view[1];
+    up_z = cameras[0].view[2];
+
+    pos_z = (bb.get_max_z() + bb.get_min_z())/2.;
+
+    double r = 2 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_y(),2.));
+
+        pos_x = r * cos(alpha);
+        pos_y = r * sin(alpha);
+
+        alpha += 0.04;
+        sleep(0.01);
+        viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
+                                     view_x, view_y, view_z,
+                                     up_x, up_y, up_z);
 }

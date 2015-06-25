@@ -56,6 +56,8 @@ private:
 
     void clearViewer();
 
+    double alpha;
+
 public:
     /** @brief Constructor */
     explicit PCLViewer (QWidget *parent = 0);
