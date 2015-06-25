@@ -5,17 +5,19 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
-#include <pcl/kdtree/kdtree_flann.h>
-//#include <pcl/features/normal_3d.h>
-#include <pcl/features/normal_3d_omp.h>
-#include <pcl/surface/gp3.h>
-#include <pcl/conversions.h>
+
+#include <pcl/visualization/pcl_visualizer.h>
 
 // QT
 #include <QAbstractButton>
 #include <QDialog>
 
+// This project
+#include "triangulation_meshes.h"
+
 #define PI 3.1415926
+
+class PCLViewer;
 
 namespace Ui {
 class TriangulationDialog;
@@ -34,9 +36,12 @@ private:
 
     pcl::PolygonMesh::Ptr meshes_;
 
-    int k, max_NN;
-    double search_radius, mu, max_surface_angle, min_angle, max_angle;
-    bool is_normal_consistency, if_plot_meshes;
+    TriangulationParameters triangulation_parameters;
+
+    bool if_plot_meshes;
+
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
+    PCLViewer* pclViewer_; // parent widget
 
     void setParametersToDialog();
     void getParametersFromDialog();

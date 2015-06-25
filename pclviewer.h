@@ -63,30 +63,13 @@ public:
     void addMeshes();
     void update();
 
-public slots:
-    /** @brief Triggered whenever the "Save file" button is clicked */
-    void saveFileButtonPressed ();
+    inline pcl::PointCloud<pcl::PointXYZRGBA>::Ptr getPointsData() {
+        return cloud_;
+    }
 
-    /** @brief Triggered whenever the "Load file" button is clicked */
-    void loadFileButtonPressed ();
-
-    /** @brief Triggered whenever a button in the "Color on axis" group is clicked */
-    void axisChosen ();
-
-    /** @brief Triggered whenever a button in the "Color mode" group is clicked */
-    void lookUpTableChosen ();
-
-    /** @brief About the program.*/
-    void about();
-
-    void color_mode_dialog();
-
-    void onTriangulation();
-
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr getPointsData();
-
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> getViewer();
-
+    inline boost::shared_ptr<pcl::visualization::PCLVisualizer> getViewer() {
+        return viewer_;
+    }
 
 protected:
     /** @brief 0 = x | 1 = y | 2 = z */
@@ -110,6 +93,28 @@ protected:
      */
     void colorCloudDistances();
     void updatePointCloud();
+
+public slots:
+    /** @brief Triggered whenever the "Save file" button is clicked */
+    void saveFileButtonPressed ();
+
+    /** @brief Triggered whenever the "Load file" button is clicked */
+    void loadFileButtonPressed ();
+
+    /** @brief Triggered whenever a button in the "Color on axis" group is clicked */
+    void axisChosen ();
+
+    /** @brief Triggered whenever a button in the "Color mode" group is clicked */
+    void lookUpTableChosen ();
+
+    /** @brief About the program.*/
+    void about();
+
+    void color_mode_dialog();
+
+    void onTriangulation();
+
+    void onTour();
 
 };
 

@@ -2,15 +2,19 @@
 #include "../build/ui_pclviewer.h"
 
 #include "colordialog.h"
+#include "tourdialog.h"
 
 PCLViewer::PCLViewer (QWidget *parent) :
     QMainWindow (parent),
     ui (new Ui::PCLViewer),
     filtering_axis_ (1),  // = y
     color_mode_ (4), // = Rainbow
+    // Note: the order of initialization is very important.
+    //  viewer_ should be initialized before other dialogs.
+    viewer_(new pcl::visualization::PCLVisualizer ("viewer", false)),
     cdialog(new ColorDialog(this)),
-    cloud_(new pcl::PointCloud<pcl::PointXYZRGBA>),
-    triangulationDialog_(new TriangulationDialog(this))
+    triangulationDialog_(new TriangulationDialog(this)),
+    cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
 {
 
     ui->setupUi (this);
@@ -19,18 +23,6 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // add status bar message
     ui->statusBar->showMessage("Open a .pcd file to start.");
 
-    // Setup the cloud pointer
-    //cloud_.reset(new pcl::PointCloud<pcl::PointXYZRGBA>);
-    // The number of points in the cloud
-    cloud_->resize(500);
-
-    // Fill the cloud with random points
-    for (size_t i = 0; i < cloud_->points.size (); i++)
-    {
-    cloud_->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
-    cloud_->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
-    cloud_->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
-    }
 
     // Set up the QVTK window
     setUpQVTKWindow();
@@ -51,8 +43,23 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // connet View -> Triangulation
     connect(ui->action_Triangulation, SIGNAL(triggered()), this, SLOT(onTriangulation()));
 
+    // connet View -> Tour
+    connect(ui->actionTour, SIGNAL(triggered()), this, SLOT(onTour()));
+
+    // The number of points in the cloud
+    cloud_->resize(500);
+
+    // Fill the cloud with random points
+    for (size_t i = 0; i < cloud_->points.size (); i++)
+    {
+        cloud_->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
+        cloud_->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
+        cloud_->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
+    }
+
     // Color the randomly generated cloud
     colorCloudDistances ();
+
     viewer_->addPointCloud(cloud_, "cloud");
     viewer_->resetCamera();
     ui->qvtkWidget->update();
@@ -66,7 +73,6 @@ PCLViewer::~PCLViewer ()
 }
 
 void PCLViewer::setUpQVTKWindow() {
-    viewer_.reset (new pcl::visualization::PCLVisualizer ("viewer", false));
     viewer_->setBackgroundColor (0.2, 0.2, 0.2);
     ui->qvtkWidget->SetRenderWindow (viewer_->getRenderWindow ());
     viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
@@ -110,6 +116,7 @@ void PCLViewer::loadFileButtonPressed ()
     clearViewer();
 
     viewer_->addPointCloud (cloud_, "cloud");
+
     viewer_->resetCamera ();
     ui->qvtkWidget->update ();
 }
@@ -279,7 +286,7 @@ void PCLViewer::colorCloudDistances () {
 }
 
 void PCLViewer::about() {
-    QMessageBox msgBox;
+    QMessageBox msgBox(this);
     msgBox.setText("This is a poit cloud file GUI viewer.<br>"
                    "<b>Author</b>: Yang Zhang <br>"
                    "<b>Email</b>: <a href='mailto:zy31415@gmail.com?Subject=About point cloud viewer' target='_top'>zy31415@gmail.com</a><br>");
@@ -308,13 +315,6 @@ void PCLViewer::update() {
     ui->qvtkWidget->update();
 }
 
-pcl::PointCloud<pcl::PointXYZRGBA>::Ptr PCLViewer::getPointsData() {
-    return cloud_;
-}
-
-boost::shared_ptr<pcl::visualization::PCLVisualizer> PCLViewer::getViewer() {
-    return viewer_;
-}
 
 void PCLViewer::clearViewer() {
     viewer_->removeAllShapes();
@@ -324,5 +324,10 @@ void PCLViewer::clearViewer() {
     delete triangulationDialog_;
     triangulationDialog_ = new TriangulationDialog(this);
 
+}
+
+void PCLViewer::onTour() {
+    TourDialog td(this);
+    td.exec();
 }
 

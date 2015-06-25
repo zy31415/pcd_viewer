@@ -15,15 +15,23 @@ TEMPLATE = app
 SOURCES += main.cpp\
         pclviewer.cpp \
     colordialog.cpp \
-    triangulationdialog.cpp
+    triangulationdialog.cpp \
+    compute_triangulation_mesh.cpp \
+    triangulation_meshes.cpp \
+    tourdialog.cpp \
+    boundingbox.cpp
 
 HEADERS  += pclviewer.h \
     colordialog.h \
-    triangulationdialog.h
+    triangulationdialog.h \
+    triangulation_meshes.h \
+    tourdialog.h \
+    boundingbox.h
 
 FORMS    += pclviewer.ui \
     colordialog.ui \
-    triangulationdialog.ui
+    triangulationdialog.ui \
+    tourdialog.ui
 
 RESOURCES += \
     resources.qrc
