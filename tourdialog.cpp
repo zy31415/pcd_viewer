@@ -11,6 +11,8 @@
 
 #include <qtconcurrentrun.h>
 
+#include "worker.h"
+
 TourDialog::TourDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TourDialog)
@@ -56,43 +58,62 @@ void TourDialog::onButton(QAbstractButton *button) {
         button_cancel();
         break;
     case QDialogButtonBox::Apply:
-        QFuture<void> f1 = button_apply();
-
+        button_apply();
         break;
     }
 }
 
 void TourDialog::button_apply() {
 
-    double pos_x, pos_y, pos_z,
-            view_x, view_y, view_z,
-            up_x, up_y, up_z;
+    QThread* thread_ = new QThread;
 
-//    pos_x = ui->pos_x->text().toFloat();
-//    pos_y = ui->pos_y->text().toFloat();
-//    pos_z = ui->pos_z->text().toFloat();
-    view_x = ui->view_x->text().toFloat();
-    view_y = ui->view_y->text().toFloat();
-    view_z = ui->view_z->text().toFloat();
-    up_x = ui->up_x->text().toFloat();
-    up_y = ui->up_y->text().toFloat();
-    up_z = ui->up_z->text().toFloat();
+    Worker* worker_ = new Worker(this);
+    worker_->setViewer(viewer_);
+    worker_->setBoundingBox(pclViewer_->getBoundingBox());
 
-    BoundingBox bb = pclViewer_->getBoundingBox();
+    worker_->moveToThread(thread_);
 
-    pos_z = (bb.get_max_z() + bb.get_min_z())/2.;
+    connect(worker_, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    connect(thread_, SIGNAL(started()), worker_, SLOT(process()));
+    connect(worker_, SIGNAL(finished()), thread_, SLOT(quit()));
+    connect(worker_, SIGNAL(finished()), worker_, SLOT(deleteLater()));
+    connect(thread_, SIGNAL(finished()), thread_, SLOT(deleteLater()));
 
-    double r = 2 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_y(),2.));
+    thread_->start();
 
-    double alpha = 0;
-    while (alpha < 3.14*4) {
-        pos_x = r * cos(alpha);
-        pos_y = r * sin(alpha);
 
-        alpha += 0.002;
-        sleep(0.01);
-        viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
-                                     view_x, view_y, view_z,
-                                     up_x, up_y, up_z);
-    }
+
+//    double pos_x, pos_y, pos_z,
+//            view_x, view_y, view_z,
+//            up_x, up_y, up_z;
+
+////    pos_x = ui->pos_x->text().toFloat();
+////    pos_y = ui->pos_y->text().toFloat();
+////    pos_z = ui->pos_z->text().toFloat();
+//    view_x = ui->view_x->text().toFloat();
+//    view_y = ui->view_y->text().toFloat();
+//    view_z = ui->view_z->text().toFloat();
+//    up_x = ui->up_x->text().toFloat();
+//    up_y = ui->up_y->text().toFloat();
+//    up_z = ui->up_z->text().toFloat();
+
+//    BoundingBox bb = pclViewer_->getBoundingBox();
+
+//    pos_z = (bb.get_max_z() + bb.get_min_z())/2.;
+
+//    double r = 2 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_y(),2.));
+
+//    double alpha = 0;
+//    while (alpha < 3.14*4) {
+//        pos_x = r * cos(alpha);
+//        pos_y = r * sin(alpha);
+
+//        alpha += 0.002;
+//        sleep(0.01);
+//        viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
+//                                     view_x, view_y, view_z,
+//                                     up_x, up_y, up_z);
+//    }
 }
+
+

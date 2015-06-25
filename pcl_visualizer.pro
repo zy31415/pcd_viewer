@@ -19,14 +19,16 @@ SOURCES += main.cpp\
     compute_triangulation_mesh.cpp \
     triangulation_meshes.cpp \
     tourdialog.cpp \
-    boundingbox.cpp
+    boundingbox.cpp \
+    worker.cpp
 
 HEADERS  += pclviewer.h \
     colordialog.h \
     triangulationdialog.h \
     triangulation_meshes.h \
     tourdialog.h \
-    boundingbox.h
+    boundingbox.h \
+    worker.h
 
 FORMS    += pclviewer.ui \
     colordialog.ui \

@@ -10,10 +10,10 @@ link_directories    (${PCL_LIBRARY_DIRS})
 add_definitions     (${PCL_DEFINITIONS})
 
 set  (project_SOURCES main.cpp pclviewer.cpp colordialog.cpp triangulationdialog.cpp
-		triangulation_meshes.cpp tourdialog.cpp boundingbox.cpp	)
+		triangulation_meshes.cpp tourdialog.cpp boundingbox.cpp	worker.cpp)
 
 set  (project_HEADERS pclviewer.h colordialog.h triangulationdialog.h
-		triangulation_meshes.h tourdialog.h boundingbox.h )
+		triangulation_meshes.h tourdialog.h boundingbox.h worker.h)
 
 set  (project_FORMS   pclviewer.ui colordialog.ui triangulationdialog.ui tourdialog.ui)
 set  (VTK_LIBRARIES   vtkRendering vtkGraphics vtkHybrid QVTK)
@@ -31,5 +31,5 @@ ADD_EXECUTABLE  (pcd_viewer ${project_SOURCES}
                                 ${project_HEADERS_MOC}
 								${UI_RESOURCES})
 
-TARGET_LINK_LIBRARIES (pcd_viewer ${QT_LIBRARIES} ${PCL_LIBRARIES} ${VTK_LIBRARIES})
+TARGET_LINK_LIBRARIES (pcd_viewer ${QT_LIBRARIES} ${PCL_LIBRARIES} ${VTK_LIBRARIES} pthread)
 

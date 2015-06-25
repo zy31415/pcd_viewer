@@ -36,6 +36,8 @@ private:
 
 public slots:
     void onButton(QAbstractButton *button);
+
+    void errorString(QString str) { std::cout<<str.toStdString()<<std::endl;}
 };
 
 #endif // TOURDIALOG_H
