@@ -17,8 +17,7 @@ PCLViewer::PCLViewer (QWidget *parent) :
     cdialog(new ColorDialog(this)),
     triangulationDialog_(new TriangulationDialog(this)),
     td_(new TourDialog(this)),
-    cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>),
-    alpha(0.)
+    cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
 {
 
     ui->setupUi (this);
@@ -51,7 +50,6 @@ PCLViewer::PCLViewer (QWidget *parent) :
     connect(ui->actionTour, SIGNAL(triggered()), this, SLOT(onTour()));
 
     connect(ui->actionTake_a_Screen_Shot, SIGNAL(triggered()), this, SLOT(onTakeAScreenShot()));
-
 
 
     // The number of points in the cloud
@@ -95,6 +93,12 @@ void PCLViewer::loadFileButtonPressed ()
     QString filename = QFileDialog::getOpenFileName (this, tr ("Open point cloud"), ".", tr ("Point cloud data (*.pcd *.ply)"));
 
     PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
+
+    loadPointsCloudFileAndPlot(filename);
+}
+
+void PCLViewer::loadPointsCloudFileAndPlot(QString filename) {
+
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_tmp (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
     if (filename.isEmpty ())
@@ -102,24 +106,22 @@ void PCLViewer::loadFileButtonPressed ()
 
     int return_status;
     if (filename.endsWith (".pcd", Qt::CaseInsensitive))
-    return_status = pcl::io::loadPCDFile (filename.toStdString (), *cloud_tmp);
+        return_status = pcl::io::loadPCDFile (filename.toStdString (), *cloud_tmp);
     else
-    return_status = pcl::io::loadPLYFile (filename.toStdString (), *cloud_tmp);
+        return_status = pcl::io::loadPLYFile (filename.toStdString (), *cloud_tmp);
 
-    if (return_status != 0)
-    {
-    PCL_ERROR("Error reading point cloud %s\n", filename.toStdString ().c_str ());
-    return;
+    if (return_status != 0) {
+        PCL_ERROR("Error reading point cloud %s\n", filename.toStdString ().c_str ());
+        return;
     }
 
     // If point cloud contains NaN values, remove them before updating the visualizer point cloud
     if (cloud_tmp->is_dense)
-    pcl::copyPointCloud (*cloud_tmp, *cloud_);
-    else
-    {
-    PCL_WARN("Cloud is not dense! Non finite points will be removed\n");
-    std::vector<int> vec;
-    pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
+        pcl::copyPointCloud (*cloud_tmp, *cloud_);
+    else {
+        PCL_WARN("Cloud is not dense! Non finite points will be removed\n");
+        std::vector<int> vec;
+        pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
     }
 
     bb.update(cloud_);

@@ -56,7 +56,7 @@ private:
 
     void clearViewer();
 
-    double alpha;
+    void loadPointsCloudFileAndPlot(QString filename);
 
 public:
     /** @brief Constructor */

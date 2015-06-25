@@ -107,6 +107,7 @@
    <addaction name="action_Open"/>
    <addaction name="action_Save"/>
    <addaction name="action_Color_Mode"/>
+   <addaction name="action_Triangulation"/>
    <addaction name="actionTour"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -165,8 +166,18 @@
    </property>
   </action>
   <action name="action_Triangulation">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/Icon-meshes.png</normaloff>:/resources/Icon-meshes.png</iconset>
+   </property>
    <property name="text">
-    <string>&amp;Triangulation Settings</string>
+    <string>&amp;Meshes</string>
+   </property>
+   <property name="toolTip">
+    <string>Add meshes to the plot.</string>
+   </property>
+   <property name="statusTip">
+    <string>Click to configure and add.</string>
    </property>
   </action>
   <action name="actionTour">
