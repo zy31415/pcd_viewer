@@ -6,5 +6,6 @@
         <file>resources/About-icon.png</file>
         <file>resources/Color-icon.png</file>
         <file>resources/Icon-meshes.png</file>
+        <file>resources/Snapshot.png</file>
     </qresource>
 </RCC>

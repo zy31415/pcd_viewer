@@ -35,9 +35,13 @@ HEADERS  += pclviewer.h \
 FORMS    += pclviewer.ui \
     colordialog.ui \
     triangulationdialog.ui \
+    setcameradialog.ui \
     tourdialog.ui
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    CMakeLists.txt
 
 

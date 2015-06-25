@@ -13,7 +13,7 @@
 class PCLViewer;
 
 namespace Ui {
-class TourDialog;
+    class TourDialog;
 }
 
 class TourDialog : public QDialog
@@ -21,8 +21,8 @@ class TourDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TourDialog(QWidget *parent = 0);
-    ~TourDialog();
+    TourDialog(QWidget *parent = 0);
+    ~TourDialog() { delete ui;}
 
 private:
     Ui::TourDialog *ui;

@@ -157,10 +157,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>buttonBox</zorder>
-  <zorder>label_view</zorder>
-  <zorder>label_view</zorder>
-  <zorder>verticalLayoutWidget_4</zorder>
  </widget>
  <resources/>
  <connections>

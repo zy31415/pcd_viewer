@@ -58,6 +58,8 @@ private:
 
     void loadPointsCloudFileAndPlot(QString filename);
 
+    void connect_SIGNAL_SLOT();
+
 public:
     /** @brief Constructor */
     explicit PCLViewer (QWidget *parent = 0);
@@ -126,7 +128,10 @@ public slots:
 
     void onTour();
 
-    void onTakeAScreenShot();
+    void onSnapshot();
+
+private slots:
+    void onSetCamera();
 
 };
 

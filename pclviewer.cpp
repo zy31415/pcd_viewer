@@ -3,8 +3,12 @@
 
 #include "colordialog.h"
 #include "worker.h"
+#include "setcameradialog.h"
 
-#include<QThread>
+#include <QThread>
+#include <string>
+
+#include <boost/filesystem.hpp>
 
 PCLViewer::PCLViewer (QWidget *parent) :
     QMainWindow (parent),
@@ -30,26 +34,8 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // Set up the QVTK window
     setUpQVTKWindow();
 
-    // Connect "Load" and "Save" buttons and their functions
-    connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
-    connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
 
-    // Connet File -> Close
-    connect(ui->action_Close, SIGNAL(triggered()), this, SLOT(close()));
-
-    // Connet Help -> About
-    connect(ui->action_About, SIGNAL(triggered()), this, SLOT(about()));
-
-    // connet View -> Color Mode
-    connect(ui->action_Color_Mode, SIGNAL(triggered()), this, SLOT(color_mode_dialog()));
-
-    // connet View -> Triangulation
-    connect(ui->action_Triangulation, SIGNAL(triggered()), this, SLOT(onTriangulation()));
-
-    // connet View -> Tour
-    connect(ui->actionTour, SIGNAL(triggered()), this, SLOT(onTour()));
-
-    connect(ui->actionTake_a_Screen_Shot, SIGNAL(triggered()), this, SLOT(onTakeAScreenShot()));
+    connect_SIGNAL_SLOT();
 
 
     // The number of points in the cloud
@@ -79,6 +65,33 @@ PCLViewer::~PCLViewer ()
     delete cdialog;
     delete triangulationDialog_;
     delete td_;
+}
+
+void PCLViewer::connect_SIGNAL_SLOT() {
+    // Connect "Load" and "Save" buttons and their functions
+    connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
+    connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
+
+    // Connet File -> Close
+    connect(ui->action_Close, SIGNAL(triggered()), this, SLOT(close()));
+
+    // Connet Help -> About
+    connect(ui->action_About, SIGNAL(triggered()), this, SLOT(about()));
+
+    // connet View -> Color Mode
+    connect(ui->action_Color_Mode, SIGNAL(triggered()), this, SLOT(color_mode_dialog()));
+
+    // connet View -> Triangulation
+    connect(ui->action_Triangulation, SIGNAL(triggered()), this, SLOT(onTriangulation()));
+
+    // connet View -> Tour
+    connect(ui->actionTour, SIGNAL(triggered()), this, SLOT(onTour()));
+
+    connect(ui->actionSnapshot, SIGNAL(triggered()), this, SLOT(onSnapshot()));
+
+    connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCamera()));
+
+
 }
 
 void PCLViewer::setUpQVTKWindow() {
@@ -300,10 +313,30 @@ void PCLViewer::onTour() {
     td_->show();
 }
 
-void PCLViewer::onTakeAScreenShot(){
-    QRect rect(0,0, 1000, 1000);
-    QPixmap pixmap(rect.size());
-    ui->qvtkWidget->render(&pixmap, QPoint(), QRegion(rect));
-    pixmap.save("Hello.jpg");
+void PCLViewer::onSnapshot(){
+    QFileDialog fdialog(this);
+    fdialog.setDefaultSuffix("png");
 
+    QString filter = "Images (*.bmp *.gif *.jpg *.jpeg *.png);;All files (*.*)";
+    QString filename = fdialog.getSaveFileName(
+                this, tr ("Save snapshot"), "snapshot.png",
+                filter, &filter);
+
+    boost::filesystem::path p(filename.toStdString());
+
+    std::string extension(p.extension().string());
+
+    if ( extension == "")
+        filename += ".png";
+
+    QRect rect = ui->qvtkWidget->geometry();
+    QPixmap pixmap(rect);
+    ui->qvtkWidget->render(&pixmap, QPoint(), QRegion(rect));
+    pixmap.save(filename);
+
+}
+
+void PCLViewer::onSetCamera() {
+    SetCameraDialog dialog;
+    dialog.exec();
 }

@@ -1,5 +1,5 @@
-#ifndef TOURDIALOG_H
-#define TOURDIALOG_H
+#ifndef SETCAMERADIALOG_H
+#define SETCAMERADIALOG_H
 
 // pcl
 #include <pcl/visualization/pcl_visualizer.h>
@@ -7,8 +7,6 @@
 // QT
 #include <QDialog>
 #include <QAbstractButton>
-
-// This project
 
 class PCLViewer;
 
@@ -31,16 +29,9 @@ private:
     PCLViewer* pclViewer_; // parent widget
 
     void button_apply();
-    void button_cancel() {}
-    void button_ok() {}
 
 public slots:
     void onButton(QAbstractButton *button);
-
-    void errorString(QString str) { std::cout<<str.toStdString()<<std::endl;}
-
-    void tour();
-
 };
 
 #endif // TOURDIALOG_H

@@ -17,8 +17,8 @@
 TourDialog::TourDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TourDialog),
-    alpha(0)
-{
+    alpha(0) {
+
     ui->setupUi(this);
 
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
@@ -43,10 +43,7 @@ TourDialog::TourDialog(QWidget *parent) :
 
 }
 
-TourDialog::~TourDialog()
-{
-    delete ui;
-}
+
 
 void TourDialog::onButton(QAbstractButton *button) {
     QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
