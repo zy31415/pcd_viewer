@@ -2,6 +2,9 @@
 #include "../build/ui_pclviewer.h"
 
 #include "colordialog.h"
+#include "worker.h"
+
+#include<QThread>
 
 PCLViewer::PCLViewer (QWidget *parent) :
     QMainWindow (parent),
@@ -45,6 +48,8 @@ PCLViewer::PCLViewer (QWidget *parent) :
 
     // connet View -> Tour
     connect(ui->actionTour, SIGNAL(triggered()), this, SLOT(onTour()));
+
+    connect(ui->pushButton, SIGNAL(clicked(bool)), this, SLOT(onButtonClicked()));
 
     // The number of points in the cloud
     cloud_->resize(500);
@@ -290,3 +295,24 @@ void PCLViewer::onTour() {
     td_->show();
 }
 
+
+void PCLViewer::onButtonClicked() {
+    QThread* thread_ = new QThread;
+
+    Worker* worker_ = new Worker(this);
+    worker_->setViewer(viewer_);
+    worker_->setBoundingBox(bb);
+
+    worker_->moveToThread(thread_);
+
+    connect(worker_, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    connect(thread_, SIGNAL(started()), worker_, SLOT(process()));
+    connect(worker_, SIGNAL(finished()), thread_, SLOT(quit()));
+    connect(worker_, SIGNAL(finished()), worker_, SLOT(deleteLater()));
+    connect(thread_, SIGNAL(finished()), thread_, SLOT(deleteLater()));
+
+    thread_->start();
+    thread_->wait();
+
+    //viewer_->spinOnce(100, true);
+}

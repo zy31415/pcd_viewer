@@ -80,6 +80,7 @@ void TourDialog::button_apply() {
     connect(thread_, SIGNAL(finished()), thread_, SLOT(deleteLater()));
 
     thread_->start();
+    //thread_->wait();
 
 
 

@@ -5,6 +5,8 @@ void Worker::process() {
             view_x, view_y, view_z,
             up_x, up_y, up_z;
 
+    std::cout<<"asdfasdfsdsadf"<<std::endl;
+
     std::vector<pcl::visualization::Camera> cameras;
     viewer_ -> getCameras(cameras);
 
@@ -24,6 +26,7 @@ void Worker::process() {
     pos_z = (bb.get_max_z() + bb.get_min_z())/2.;
 
     double r = 2 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_y(),2.));
+
 
     double alpha = 0;
     while (alpha < 3.14*4) {
