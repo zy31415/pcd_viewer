@@ -30,6 +30,8 @@ private:
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
     PCLViewer* pclViewer_; // parent widget
 
+    double alpha;
+
     void button_apply();
     void button_cancel() {}
     void button_ok() {}
@@ -38,6 +40,11 @@ public slots:
     void onButton(QAbstractButton *button);
 
     void errorString(QString str) { std::cout<<str.toStdString()<<std::endl;}
+
+    void tour();
+
+signals:
+    void click_apply();
 };
 
 #endif // TOURDIALOG_H

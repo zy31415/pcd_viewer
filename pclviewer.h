@@ -126,10 +126,6 @@ public slots:
 
     void onTour();
 
-    void onButtonClicked();
-
-    void errorString(QString str) { std::cout<<str.toStdString()<<std::endl;}
-
 };
 
 #endif // PCLVIEWER_H

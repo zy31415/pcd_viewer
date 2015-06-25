@@ -15,22 +15,13 @@ public:
     explicit Worker(QObject *parent = 0) {}
     ~Worker(){}
 
-    void setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_) {
-        this->viewer_ = viewer_;}
-
-    void setBoundingBox(BoundingBox bb) {
-        this->bb = bb;}
-
 signals:
+    void click_apply();
     void finished();
     void error(QString err);
 
 public slots:
     void process();
-
-private:
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    BoundingBox bb;
 };
 
 #endif // WORKER_H
