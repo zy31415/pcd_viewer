@@ -50,6 +50,8 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // connet View -> Tour
     connect(ui->actionTour, SIGNAL(triggered()), this, SLOT(onTour()));
 
+    connect(ui->actionTake_a_Screen_Shot, SIGNAL(triggered()), this, SLOT(onTakeAScreenShot()));
+
 
 
     // The number of points in the cloud
@@ -294,4 +296,12 @@ void PCLViewer::clearViewer() {
 
 void PCLViewer::onTour() {
     td_->show();
+}
+
+void PCLViewer::onTakeAScreenShot(){
+    QRect rect(0,0, 1000, 1000);
+    QPixmap pixmap(rect.size());
+    ui->qvtkWidget->render(&pixmap, QPoint(), QRegion(rect));
+    pixmap.save("Hello.jpg");
+
 }

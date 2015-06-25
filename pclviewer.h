@@ -126,6 +126,8 @@ public slots:
 
     void onTour();
 
+    void onTakeAScreenShot();
+
 };
 
 #endif // PCLVIEWER_H

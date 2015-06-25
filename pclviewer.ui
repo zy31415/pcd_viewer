@@ -88,6 +88,7 @@
     <addaction name="action_Triangulation"/>
     <addaction name="actionTour"/>
     <addaction name="actionSet_Camera"/>
+    <addaction name="actionTake_a_Screen_Shot"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Color_Mode"/>
@@ -176,6 +177,11 @@
   <action name="actionSet_Camera">
    <property name="text">
     <string>Set Camera ...</string>
+   </property>
+  </action>
+  <action name="actionTake_a_Screen_Shot">
+   <property name="text">
+    <string>Take a Screen Shot</string>
    </property>
   </action>
  </widget>

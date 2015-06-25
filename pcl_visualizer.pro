@@ -20,8 +20,7 @@ SOURCES += main.cpp\
     triangulation_meshes.cpp \
     tourdialog.cpp \
     boundingbox.cpp \
-    worker.cpp \
-    threadsafepclvisualizer.cpp
+    worker.cpp
 
 HEADERS  += pclviewer.h \
     colordialog.h \
@@ -29,8 +28,7 @@ HEADERS  += pclviewer.h \
     triangulation_meshes.h \
     tourdialog.h \
     boundingbox.h \
-    worker.h \
-    threadsafepclvisualizer.h
+    worker.h
 
 FORMS    += pclviewer.ui \
     colordialog.ui \
