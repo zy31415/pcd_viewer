@@ -7,6 +7,9 @@
 #include "tourdialog.h"
 #include "../build/ui_tourdialog.h"
 
+#include "pclviewer.h"
+
+#include <qtconcurrentrun.h>
 
 TourDialog::TourDialog(QWidget *parent) :
     QDialog(parent),
@@ -47,13 +50,14 @@ void TourDialog::onButton(QAbstractButton *button) {
     switch(standardButton) {
     // Standard buttons:
     case QDialogButtonBox::Ok:
-        button_ok();
+        button_apply();
         break;
     case QDialogButtonBox::Cancel:
         button_cancel();
         break;
     case QDialogButtonBox::Apply:
-        button_apply();
+        QFuture<void> f1 = button_apply();
+
         break;
     }
 }
@@ -64,9 +68,9 @@ void TourDialog::button_apply() {
             view_x, view_y, view_z,
             up_x, up_y, up_z;
 
-    pos_x = ui->pos_x->text().toFloat();
-    pos_y = ui->pos_y->text().toFloat();
-    pos_z = ui->pos_z->text().toFloat();
+//    pos_x = ui->pos_x->text().toFloat();
+//    pos_y = ui->pos_y->text().toFloat();
+//    pos_z = ui->pos_z->text().toFloat();
     view_x = ui->view_x->text().toFloat();
     view_y = ui->view_y->text().toFloat();
     view_z = ui->view_z->text().toFloat();
@@ -74,18 +78,21 @@ void TourDialog::button_apply() {
     up_y = ui->up_y->text().toFloat();
     up_z = ui->up_z->text().toFloat();
 
-    for (int n=0; n<1000; n++) {
-        pos_x *= 0.9;
-        pos_y *= 0.9;
-        pos_z *= 0.9;
+    BoundingBox bb = pclViewer_->getBoundingBox();
+
+    pos_z = (bb.get_max_z() + bb.get_min_z())/2.;
+
+    double r = 2 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_y(),2.));
+
+    double alpha = 0;
+    while (alpha < 3.14*4) {
+        pos_x = r * cos(alpha);
+        pos_y = r * sin(alpha);
+
+        alpha += 0.002;
         sleep(0.01);
         viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
                                      view_x, view_y, view_z,
                                      up_x, up_y, up_z);
     }
-
-
-
-    //viewer_ -> spin();
-
 }

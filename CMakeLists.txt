@@ -10,11 +10,10 @@ link_directories    (${PCL_LIBRARY_DIRS})
 add_definitions     (${PCL_DEFINITIONS})
 
 set  (project_SOURCES main.cpp pclviewer.cpp colordialog.cpp triangulationdialog.cpp
-		triangulation_meshes.cpp tourdialog.cpp
-	)
+		triangulation_meshes.cpp tourdialog.cpp boundingbox.cpp	)
 
 set  (project_HEADERS pclviewer.h colordialog.h triangulationdialog.h
-		triangulation_meshes.h tourdialog.h)
+		triangulation_meshes.h tourdialog.h boundingbox.h )
 
 set  (project_FORMS   pclviewer.ui colordialog.ui triangulationdialog.ui tourdialog.ui)
 set  (VTK_LIBRARIES   vtkRendering vtkGraphics vtkHybrid QVTK)

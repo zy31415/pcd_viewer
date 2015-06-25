@@ -34,3 +34,25 @@ void BoundingBox::update(const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_) {
             max_z = cloud_it->z;
     }
 }
+
+double BoundingBox::get_max(int axis){
+    switch (axis) {
+    case 0:  // x
+        return max_x;
+    case 1:  // y
+        return max_y;
+    default:
+        return max_z;
+    }
+}
+
+double BoundingBox::get_min(int axis){
+    switch (axis) {
+    case 0:  // x
+        return min_x;
+    case 1:  // y
+        return min_y;
+    default:
+        return min_z;
+    }
+}

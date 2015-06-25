@@ -9,7 +9,8 @@
 #include <QAbstractButton>
 
 // This project
-#include "pclviewer.h"
+
+class PCLViewer;
 
 namespace Ui {
 class TourDialog;

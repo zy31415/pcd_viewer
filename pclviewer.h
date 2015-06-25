@@ -23,6 +23,8 @@
 // this project
 #include "colordialog.h"
 #include "triangulationdialog.h"
+#include "boundingbox.h"
+#include "tourdialog.h"
 
 // typedef pcl::PointXYZRGBA PointT;
 // typedef pcl::PointCloud<pcl::PointXYZRGBA> PointCloudT;
@@ -43,9 +45,12 @@ private:
 
     /** @brief The point cloud displayed */
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_;
+    BoundingBox bb;
 
     ColorDialog* cdialog;
     TriangulationDialog* triangulationDialog_;
+
+    TourDialog* td_;
 
     void setUpQVTKWindow(void);
 
@@ -70,6 +75,9 @@ public:
     inline boost::shared_ptr<pcl::visualization::PCLVisualizer> getViewer() {
         return viewer_;
     }
+
+    inline BoundingBox& getBoundingBox () {return bb;}
+
 
 protected:
     /** @brief 0 = x | 1 = y | 2 = z */

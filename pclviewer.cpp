@@ -2,7 +2,6 @@
 #include "../build/ui_pclviewer.h"
 
 #include "colordialog.h"
-#include "tourdialog.h"
 
 PCLViewer::PCLViewer (QWidget *parent) :
     QMainWindow (parent),
@@ -14,6 +13,7 @@ PCLViewer::PCLViewer (QWidget *parent) :
     viewer_(new pcl::visualization::PCLVisualizer ("viewer", false)),
     cdialog(new ColorDialog(this)),
     triangulationDialog_(new TriangulationDialog(this)),
+    td_(new TourDialog(this)),
     cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
 {
 
@@ -57,6 +57,8 @@ PCLViewer::PCLViewer (QWidget *parent) :
         cloud_->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
     }
 
+    bb.update(cloud_);
+
     // Color the randomly generated cloud
     colorCloudDistances ();
 
@@ -70,6 +72,7 @@ PCLViewer::~PCLViewer ()
     delete ui;
     delete cdialog;
     delete triangulationDialog_;
+    delete td_;
 }
 
 void PCLViewer::setUpQVTKWindow() {
@@ -110,6 +113,8 @@ void PCLViewer::loadFileButtonPressed ()
     std::vector<int> vec;
     pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
     }
+
+    bb.update(cloud_);
 
     colorCloudDistances ();
 
@@ -168,53 +173,8 @@ void PCLViewer::updatePointCloud() {
 void PCLViewer::colorCloudDistances () {
   // Find the minimum and maximum values along the selected axis
   double min, max;
-  // Set an initial value
-  switch (filtering_axis_)
-  {
-    case 0:  // x
-      min = cloud_->points[0].x;
-      max = cloud_->points[0].x;
-      break;
-    case 1:  // y
-      min = cloud_->points[0].y;
-      max = cloud_->points[0].y;
-      break;
-    default:  // z
-      min = cloud_->points[0].z;
-      max = cloud_->points[0].z;
-      break;
-  }
-
-  // Search for the minimum/maximum
-  for (pcl::PointCloud<pcl::PointXYZRGBA>::iterator cloud_it = cloud_->begin ();
-       cloud_it != cloud_->end ();
-       cloud_it++)
-  {
-    switch (filtering_axis_)
-    {
-      case 0:  // x
-        if (min > cloud_it->x)
-          min = cloud_it->x;
-
-        if (max < cloud_it->x)
-          max = cloud_it->x;
-        break;
-      case 1:  // y
-        if (min > cloud_it->y)
-          min = cloud_it->y;
-
-        if (max < cloud_it->y)
-          max = cloud_it->y;
-        break;
-      default:  // zColorDialog* cdialog = new ColorDialog;
-        if (min > cloud_it->z)
-          min = cloud_it->z;
-
-        if (max < cloud_it->z)
-          max = cloud_it->z;
-        break;
-    }
-  }
+  min = bb.get_min(filtering_axis_);
+  max = bb.get_max(filtering_axis_);
 
   // Compute LUT scaling to fit the full histogram spectrum
   double lut_scale = 255.0 / (max - min);  // max is 255, min is 0
@@ -327,7 +287,6 @@ void PCLViewer::clearViewer() {
 }
 
 void PCLViewer::onTour() {
-    TourDialog td(this);
-    td.exec();
+    td_->show();
 }
 
