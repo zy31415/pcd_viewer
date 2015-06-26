@@ -22,7 +22,10 @@ PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
 {
     ui->setupUi (this);
 
+    //ui->centralwidget->layout()->addWidget(new );
+
     this->setWindowTitle ("PCD file viewer");
+
 
     data_ = new DataModel(this);
 

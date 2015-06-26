@@ -31,7 +31,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
-     <widget class="MyQVTKWidget" name="widget" native="true"/>
+     <widget class="QVTKWidget" name="qvtkWidget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -188,9 +188,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MyQVTKWidget</class>
+   <class>QVTKWidget</class>
    <extends>QWidget</extends>
-   <header location="global">myqvtkwidget.h</header>
+   <header location="global">QVTKWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
