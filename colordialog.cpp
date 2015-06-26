@@ -88,9 +88,9 @@ int ColorDialog::get_look_up_table() {
 
 void ColorDialog::onIfShowDataPoints() {
     if (ui->checkBox->isChecked())
-        ((PCLViewer*)parentWidget())->addPointsCloudToView();
+        pclViewer_->addPointsCloudToView();
     else
-        ((PCLViewer*)parentWidget())->removePointsCloudFromView();
+        pclViewer_->removePointsCloudFromView();
 }
 
 void ColorDialog::onChangePointSize() {
@@ -99,3 +99,5 @@ void ColorDialog::onChangePointSize() {
     viewer_->setPointCloudRenderingProperties(
                 pcl::visualization::PCL_VISUALIZER_POINT_SIZE, point_size, "cloud");
 }
+
+
