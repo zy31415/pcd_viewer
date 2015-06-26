@@ -4,7 +4,7 @@
 #include "triangulationdialog.h"
 #include "../build/ui_triangulationdialog.h"
 
-#include "pclviewer.h"
+#include "pcdviewermainwindow.h"
 
 TriangulationDialog::TriangulationDialog(QWidget *parent) :
     QDialog(parent),
@@ -19,7 +19,7 @@ TriangulationDialog::TriangulationDialog(QWidget *parent) :
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onComputeTriangulationButton(QAbstractButton*)));
     connect(ui->checkBox_if_plot_meshes, SIGNAL(toggled(bool)), this, SLOT(setEnabled()));
 
-    pclViewer_ = (PCLViewer*)parentWidget();
+    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
     viewer_ = pclViewer_ -> getViewer();
 }
 

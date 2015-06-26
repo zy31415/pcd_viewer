@@ -1,5 +1,5 @@
-#ifndef PCLVIEWER_H
-#define PCLVIEWER_H
+#ifndef PCDVIEWERMAINWINDOW_H
+#define PCDVIEWERMAINWINDOW_H
 
 // Qt
 #include <QMainWindow>
@@ -7,10 +7,8 @@
 #include <QMessageBox>
 
 // Point Cloud Library
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl/io/ply_io.h>
-#include <pcl/io/pcd_io.h>
+
+
 #include <pcl/filters/filter.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
@@ -25,27 +23,27 @@
 #include "triangulationdialog.h"
 #include "boundingbox.h"
 #include "tourdialog.h"
+#include "datamodel.h"
 
 // typedef pcl::PointXYZRGBA PointT;
 // typedef pcl::PointCloud<pcl::PointXYZRGBA> PointCloudT;
 
 namespace Ui {
-  class PCLViewer;
+  class PCDViewerMainWindow;
 }
 
-class PCLViewer : public QMainWindow {
+class PCDViewerMainWindow : public QMainWindow {
     Q_OBJECT
 
 private:
     /** @brief ui pointer */
-    Ui::PCLViewer *ui;
+    Ui::PCDViewerMainWindow *ui;
 
     /** @brief The PCL visualizer object */
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_;
 
-    /** @brief The point cloud displayed */
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_;
-    BoundingBox bb;
+    DataModel* data_;
+
 
     ColorDialog* cdialog_;
     TriangulationDialog* triangulationDialog_;
@@ -58,25 +56,21 @@ private:
 
 public:
     /** @brief Constructor */
-    explicit PCLViewer (QWidget *parent = 0);
+    explicit PCDViewerMainWindow (QWidget *parent = 0);
 
     /** @brief Destructor */
-    ~PCLViewer ();
+    ~PCDViewerMainWindow ();
 
     void removePointsCloudFromView();
     void addPointsCloudToView();
     void addMeshes();
     void update();
 
-    inline pcl::PointCloud<pcl::PointXYZRGBA>::Ptr getPointsData() {
-        return cloud_;
-    }
 
     inline boost::shared_ptr<pcl::visualization::PCLVisualizer> getViewer() {
         return viewer_;
     }
 
-    inline BoundingBox& getBoundingBox () {return bb;}
 
     void renderASnapshot(QPixmap& pixmap,
                 const QPoint & targetOffset= QPoint(),
@@ -117,6 +111,8 @@ public slots:
     void onTour();
 
     void onSnapshot();
+
+    void updateViewer();
 
 private slots:
     void onSetCamera();

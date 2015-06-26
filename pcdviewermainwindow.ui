@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PCLViewer</class>
- <widget class="QMainWindow" name="PCLViewer">
+ <class>PCDViewerMainWindow</class>
+ <widget class="QMainWindow" name="PCDViewerMainWindow">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -31,25 +31,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
-     <widget class="QVTKWidget" name="qvtkWidget" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>50</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>640</width>
-        <height>480</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-       </font>
-      </property>
-     </widget>
+     <widget class="MyQVTKWidget" name="widget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -206,9 +188,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QVTKWidget</class>
+   <class>MyQVTKWidget</class>
    <extends>QWidget</extends>
-   <header>QVTKWidget.h</header>
+   <header location="global">myqvtkwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

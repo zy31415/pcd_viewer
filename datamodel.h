@@ -37,14 +37,13 @@ private:
      * @warning If there's an outlier in the data the color may seem uniform because of this outlier!
      * @note A boost rounding exception error will be thrown if used with a non dense point cloud
      */
-    void colorCloudDistances();
+    void colorPCDAlongAxis();
 
 public:
     explicit DataModel(QObject *parent = 0);
+    ~DataModel();
 
-    void readPointsCloudFile(QString filename);
-
-
+    void readPCDFile(QString filename);
 
 signals:
 

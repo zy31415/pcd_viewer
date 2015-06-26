@@ -3,7 +3,7 @@
 #include "colordialog.h"
 #include "../build/ui_colordialog.h"
 
-#include "pclviewer.h"
+#include "pcdviewermainwindow.h"
 
 int ColorDialog::DEFAULT_POINT_SIZE = 2;
 
@@ -14,7 +14,7 @@ ColorDialog::ColorDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    pclViewer_ = (PCLViewer*)parentWidget();
+    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
     viewer_ = pclViewer_ -> getViewer();
 
     ui->lineEdit->setText(QString::number(point_size));

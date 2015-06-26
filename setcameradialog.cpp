@@ -1,7 +1,7 @@
 // This project
 #include "setcameradialog.h"
 #include "../build/ui_setcameradialog.h"
-#include "pclviewer.h"
+#include "pcdviewermainwindow.h"
 
 SetCameraDialog::SetCameraDialog(QWidget *parent) :
     QDialog(parent),
@@ -11,7 +11,7 @@ SetCameraDialog::SetCameraDialog(QWidget *parent) :
 
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
 
-    pclViewer_ = (PCLViewer*)parentWidget();
+    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
     viewer_ = pclViewer_ -> getViewer();
 
     std::vector<pcl::visualization::Camera> cameras;

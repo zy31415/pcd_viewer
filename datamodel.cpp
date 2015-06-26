@@ -1,63 +1,45 @@
 #include "datamodel.h"
 
+// pcl
+#include <pcl/io/ply_io.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+
+
 DataModel::DataModel(QObject *parent) :
     QObject(parent),
-    filtering_axis_ (1),  // = y
-    color_mode_ (4), // = Rainbow
-    cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
+    filtering_axis_(1),  // = y
+    color_mode_(4) // = Rainbow
 {
-
-  // The number of points in the cloud
-  cloud_->resize(500);
-
-  // Fill the cloud with random points
-  for (size_t i = 0; i < cloud_->points.size (); i++)
-  {
-      cloud_->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
-      cloud_->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
-      cloud_->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
-  }
-
-  bb.update(cloud_);
-
-  // Color the randomly generated cloud
-  colorCloudDistances();
+    genRandomPCDWithinUnitBox();
 }
 
-void DataModel::readPointsCloudFile(QString filename)
+DataModel::~DataModel() {}
+
+void DataModel::genRandomPCDWithinUnitBox()
 {
-    PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str());
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_tmp (new pcl::PointCloud<pcl::PointXYZRGBA>);
+    cloud_.reset(new pcl::PointCloud<pcl::PointXYZRGBA>);
 
-    if (filename.isEmpty ())
-        return;
+    // The number of points in the cloud
+    cloud_->resize(500);
 
-    int return_status;
-    if (filename.endsWith (".pcd", Qt::CaseInsensitive))
-        return_status = pcl::io::loadPCDFile (filename.toStdString (), *cloud_tmp);
-    else
-        return_status = pcl::io::loadPLYFile (filename.toStdString (), *cloud_tmp);
-
-    if (return_status != 0) {
-        PCL_ERROR("Error reading point cloud %s\n", filename.toStdString ().c_str ());
-        return;
+    // Fill the cloud with random points
+    for (size_t i = 0; i < cloud_->points.size (); i++)
+    {
+        cloud_->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
+        cloud_->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
+        cloud_->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
     }
 
-    // If point cloud contains NaN values, remove them before updating the visualizer point cloud
-    if (cloud_tmp->is_dense)
-        pcl::copyPointCloud (*cloud_tmp, *cloud_);
-    else {
-        PCL_WARN("Cloud is not dense! Non finite points will be removed\n");
-        std::vector<int> vec;
-        pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
-    }
+    // Update boundary
+    bb.update(cloud_);
 
-    //bb.update(cloud_);
-
-    colorCloudDistances ();
+    // Color the randomly generated cloud
+    colorPCDAlongAxis();
 }
 
-void DataModel::colorCloudDistances ()
+void DataModel::colorPCDAlongAxis ()
 {
   // Find the minimum and maximum values along the selected axis
   double min, max;
@@ -131,4 +113,37 @@ void DataModel::colorCloudDistances ()
         cloud_it->b = value < 128 ? 255 - (2 * value) : 0;  // b[0] = 255, b[128] = 0
     }
   }
+}
+
+void DataModel::readPCDFile(QString filename)
+{
+    PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str());
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_tmp (new pcl::PointCloud<pcl::PointXYZRGBA>);
+
+    if (filename.isEmpty ())
+        return;
+
+    int return_status;
+    if (filename.endsWith (".pcd", Qt::CaseInsensitive))
+        return_status = pcl::io::loadPCDFile (filename.toStdString (), *cloud_tmp);
+    else
+        return_status = pcl::io::loadPLYFile (filename.toStdString (), *cloud_tmp);
+
+    if (return_status != 0) {
+        PCL_ERROR("Error reading point cloud %s\n", filename.toStdString ().c_str ());
+        return;
+    }
+
+    // If point cloud contains NaN values, remove them before updating the visualizer point cloud
+    if (cloud_tmp->is_dense)
+        pcl::copyPointCloud (*cloud_tmp, *cloud_);
+    else {
+        PCL_WARN("Cloud is not dense! Non finite points will be removed\n");
+        std::vector<int> vec;
+        pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
+    }
+
+    //bb.update(cloud_);
+
+    colorPCDAlongAxis ();
 }

@@ -13,7 +13,7 @@
 
 // This project
 
-class PCLViewer;
+class PCDViewerMainWindow;
 
 namespace Ui {
     class TourDialog;
@@ -31,7 +31,7 @@ private:
     Ui::TourDialog *ui;
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    PCLViewer* pclViewer_; // parent widget
+    PCDViewerMainWindow* pclViewer_; // parent widget
 
     double alpha;
     cv::VideoWriter* videoWriter_;

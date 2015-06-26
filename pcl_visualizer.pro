@@ -13,7 +13,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        pclviewer.cpp \
     colordialog.cpp \
     triangulationdialog.cpp \
     compute_triangulation_mesh.cpp \
@@ -22,9 +21,11 @@ SOURCES += main.cpp\
     boundingbox.cpp \
     worker.cpp \
     setcameradialog.cpp \
-    datamodel.cpp
+    datamodel.cpp \
+    pcdviewermainwindow.cpp \
+    myqvtkwidget.cpp
 
-HEADERS  += pclviewer.h \
+HEADERS  += \
     colordialog.h \
     triangulationdialog.h \
     triangulation_meshes.h \
@@ -32,13 +33,16 @@ HEADERS  += pclviewer.h \
     boundingbox.h \
     worker.h \
     setcameradialog.h \
-    datamodel.h
+    datamodel.h \
+    pcdviewermainwindow.h \
+    myqvtkwidget.h
 
-FORMS    += pclviewer.ui \
+FORMS    += \
     colordialog.ui \
     triangulationdialog.ui \
     setcameradialog.ui \
-    tourdialog.ui
+    tourdialog.ui \
+    pcdviewermainwindow.ui
 
 RESOURCES += \
     resources.qrc

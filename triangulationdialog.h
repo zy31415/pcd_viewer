@@ -17,7 +17,7 @@
 
 #define PI 3.1415926
 
-class PCLViewer;
+class PCDViewerMainWindow;
 
 namespace Ui {
 class TriangulationDialog;
@@ -41,7 +41,7 @@ private:
     bool if_plot_meshes;
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    PCLViewer* pclViewer_; // parent widget
+    PCDViewerMainWindow* pclViewer_; // parent widget
 
     void setParametersToDialog();
     void getParametersFromDialog();

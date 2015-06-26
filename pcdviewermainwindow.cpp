@@ -1,5 +1,5 @@
-#include "pclviewer.h"
-#include "../build/ui_pclviewer.h"
+#include "pcdviewermainwindow.h"
+#include "../build/ui_pcdviewermainwindow.h"
 
 #include "colordialog.h"
 #include "worker.h"
@@ -10,11 +10,9 @@
 
 #include <boost/filesystem.hpp>
 
-PCLViewer::PCLViewer (QWidget *parent) :
+PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     QMainWindow (parent),
-    ui (new Ui::PCLViewer),
-    filtering_axis_ (1),  // = y
-    color_mode_ (4), // = Rainbow
+    ui (new Ui::PCDViewerMainWindow),
     // Note: the order of initialization is very important.
     //  viewer_ should be initialized before other dialogs.
     viewer_(new pcl::visualization::PCLVisualizer ("viewer", false)),
@@ -22,9 +20,11 @@ PCLViewer::PCLViewer (QWidget *parent) :
     td_(new TourDialog(this)),
     cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
 {
-
     ui->setupUi (this);
-    this->setWindowTitle ("PCD viewer");
+
+    this->setWindowTitle ("PCD file viewer");
+
+    data_ = new DataModel(this);
 
     // add status bar message
     ui->statusBar->showMessage("Open a .pcd file to start.");
@@ -37,22 +37,6 @@ PCLViewer::PCLViewer (QWidget *parent) :
     connect_SIGNAL_SLOT();
 
 
-    // The number of points in the cloud
-    cloud_->resize(500);
-
-    // Fill the cloud with random points
-    for (size_t i = 0; i < cloud_->points.size (); i++)
-    {
-        cloud_->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
-        cloud_->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
-        cloud_->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
-    }
-
-    bb.update(cloud_);
-
-    // Color the randomly generated cloud
-    colorCloudDistances();
-
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
     viewer_->addPointCloud(cloud_, rgb, "cloud");
     viewer_->resetCamera();
@@ -61,15 +45,16 @@ PCLViewer::PCLViewer (QWidget *parent) :
     cdialog_ = new ColorDialog(this);
 }
 
-PCLViewer::~PCLViewer ()
+PCDViewerMainWindow::~PCDViewerMainWindow ()
 {
     delete ui;
+    delete data_;
     delete cdialog_;
     delete triangulationDialog_;
     delete td_;
 }
 
-void PCLViewer::connect_SIGNAL_SLOT() {
+void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
     // Connect "Load" and "Save" buttons and their functions
     connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
     connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
@@ -96,14 +81,14 @@ void PCLViewer::connect_SIGNAL_SLOT() {
 
 }
 
-void PCLViewer::setUpQVTKWindow() {
+void PCDViewerMainWindow::setUpQVTKWindow() {
     viewer_->setBackgroundColor (0.2, 0.2, 0.2);
     ui->qvtkWidget->SetRenderWindow (viewer_->getRenderWindow ());
     viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
     ui->qvtkWidget->update ();
 }
 
-void PCLViewer::loadFileButtonPressed ()
+void PCDViewerMainWindow::loadFileButtonPressed ()
 {
     QString filename = QFileDialog::getOpenFileName(
                 this,
@@ -163,7 +148,7 @@ void PCLViewer::loadFileButtonPressed ()
 }
 
 
-void PCLViewer::saveFileButtonPressed ()
+void PCDViewerMainWindow::saveFileButtonPressed ()
 {
   // You might want to change "/home/" if you're not on an *nix platform
   QString filename = QFileDialog::getSaveFileName(this, tr ("Open point cloud"), "/home/", tr ("Point cloud data (*.pcd *.ply)"));
@@ -191,17 +176,17 @@ void PCLViewer::saveFileButtonPressed ()
   }
 }
 
-void PCLViewer::axisChosen() {
+void PCDViewerMainWindow::axisChosen() {
     filtering_axis_= cdialog_ -> get_color_changing_axis();
     updatePointCloud();
 }
 
-void PCLViewer::lookUpTableChosen() {
+void PCDViewerMainWindow::lookUpTableChosen() {
     color_mode_ = cdialog_ -> get_look_up_table();
     updatePointCloud();
 }
 
-void PCLViewer::updatePointCloud() {
+void PCDViewerMainWindow::updatePointCloud() {
     colorCloudDistances ();
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
     viewer_->updatePointCloud (cloud_, rgb, "cloud");
@@ -210,7 +195,7 @@ void PCLViewer::updatePointCloud() {
 
 
 
-void PCLViewer::about() {
+void PCDViewerMainWindow::about() {
     QMessageBox msgBox(this);
     msgBox.setText("This is a poit cloud file GUI viewer.<br>"
                    "<b>Author</b>: Yang Zhang <br>"
@@ -218,35 +203,35 @@ void PCLViewer::about() {
     msgBox.exec();
 }
 
-void PCLViewer::color_mode_dialog() {
+void PCDViewerMainWindow::color_mode_dialog() {
     cdialog_->show();
 }
 
-void PCLViewer::removePointsCloudFromView() {
+void PCDViewerMainWindow::removePointsCloudFromView() {
     viewer_->removePointCloud("cloud");
     ui->qvtkWidget->update();
 }
 
-void PCLViewer::addPointsCloudToView() {
+void PCDViewerMainWindow::addPointsCloudToView() {
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
     viewer_->addPointCloud(cloud_, rgb, "cloud");
     ui->qvtkWidget->update();
 }
 
-void PCLViewer::onTriangulation(){
+void PCDViewerMainWindow::onTriangulation(){
     triangulationDialog_->show();
 }
 
-void PCLViewer::update() {
+void PCDViewerMainWindow::update() {
     ui->qvtkWidget->update();
 }
 
 
-void PCLViewer::onTour() {
+void PCDViewerMainWindow::onTour() {
     td_->show();
 }
 
-void PCLViewer::onSnapshot(){
+void PCDViewerMainWindow::onSnapshot(){
     QFileDialog fdialog(this);
     fdialog.setDefaultSuffix("png");
 
@@ -270,27 +255,31 @@ void PCLViewer::onSnapshot(){
 
 }
 
-const QRect& PCLViewer::getSnapshotGeometry() {
+const QRect& PCDViewerMainWindow::getSnapshotGeometry() {
     return ui->qvtkWidget->geometry();
 }
 
-void PCLViewer::renderASnapshot(QPixmap& pixmap,
+void PCDViewerMainWindow::renderASnapshot(QPixmap& pixmap,
             const QPoint & targetOffset,
             const QRegion & sourceRegion) {
-    ui->qvtkWidget->render(&pixmap, targetOffset, sourceRegion);
+    ui->qvtkWidget->render(&updateViewerpixmap, targetOffset, sourceRegion);
 }
 
-void PCLViewer::onSetCamera() {
+void PCDViewerMainWindow::onSetCamera() {
     SetCameraDialog dialog(this);
     dialog.exec();
 }
 
-void PCLViewer::disableResize() {
+void PCDViewerMainWindow::disableResize() {
     this->setFixedSize(this->size());
 }
 
 
-void PCLViewer::enableResize() {
+void PCDViewerMainWindow::enableResize() {
     this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+}
+
+void PCDViewerMainWindow::updateViewer() {
 
 }

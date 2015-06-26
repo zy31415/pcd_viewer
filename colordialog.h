@@ -6,7 +6,7 @@
 
 #include <QDialog>
 
-class PCLViewer;
+class PCDViewerMainWindow;
 
 namespace Ui {
   class ColorDialog;
@@ -20,7 +20,7 @@ private:
     int point_size;
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    PCLViewer* pclViewer_; // parent widget
+    PCDViewerMainWindow* pclViewer_; // parent widget
 
 public:
     ColorDialog(QWidget *parent = 0);

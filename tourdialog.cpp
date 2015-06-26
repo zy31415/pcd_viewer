@@ -6,7 +6,7 @@
 #include "tourdialog.h"
 #include "../build/ui_tourdialog.h"
 
-#include "pclviewer.h"
+#include "pcdviewermainwindow.h"
 
 #include <qtconcurrentrun.h>
 
@@ -26,7 +26,7 @@ TourDialog::TourDialog(QWidget *parent) :
 
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
 
-    pclViewer_ = (PCLViewer*)parentWidget();
+    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
     viewer_ = pclViewer_ -> getViewer();
 
     ui->comboBox->addItem("Rotate around Y");

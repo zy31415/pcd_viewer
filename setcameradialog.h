@@ -8,7 +8,7 @@
 #include <QDialog>
 #include <QAbstractButton>
 
-class PCLViewer;
+class PCDViewerMainWindow;
 
 namespace Ui {
 class SetCameraDialog;
@@ -26,7 +26,7 @@ private:
     Ui::SetCameraDialog *ui;
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    PCLViewer* pclViewer_; // parent widget
+    PCDViewerMainWindow* pclViewer_; // parent widget
 
     void button_apply();
 
