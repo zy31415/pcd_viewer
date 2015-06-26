@@ -91,26 +91,7 @@ public:
 
 
 protected:
-    /** @brief 0 = x | 1 = y | 2 = z */
-    int filtering_axis_;
 
-    /** @brief Holds the color mode for @ref colorCloudDistances */
-    int color_mode_;
-
-    /** @brief Color point cloud on X,Y or Z axis using a Look-Up Table (LUT)
-     * Computes a LUT and color the cloud accordingly, available color palettes are :
-     *
-     *  Values are on a scale from 0 to 255:
-     *  0. Blue (= 0) -> Red (= 255), this is the default value
-     *  1. Green (= 0) -> Magenta (= 255)
-     *  2. White (= 0) -> Red (= 255)
-     *  3. Grey (< 128) / Red (> 128)
-     *  4. Blue -> Green -> Red (~ rainbow)
-     *
-     * @warning If there's an outlier in the data the color may seem uniform because of this outlier!
-     * @note A boost rounding exception error will be thrown if used with a non dense point cloud
-     */
-    void colorCloudDistances();
     void updatePointCloud();
 
 public slots:

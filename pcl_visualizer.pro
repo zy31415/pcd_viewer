@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     tourdialog.cpp \
     boundingbox.cpp \
     worker.cpp \
-    setcameradialog.cpp
+    setcameradialog.cpp \
+    datamodel.cpp
 
 HEADERS  += pclviewer.h \
     colordialog.h \
@@ -30,7 +31,8 @@ HEADERS  += pclviewer.h \
     tourdialog.h \
     boundingbox.h \
     worker.h \
-    setcameradialog.h
+    setcameradialog.h \
+    datamodel.h
 
 FORMS    += pclviewer.ui \
     colordialog.ui \
