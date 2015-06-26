@@ -47,16 +47,12 @@ private:
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_;
     BoundingBox bb;
 
-    ColorDialog* cdialog;
+    ColorDialog* cdialog_;
     TriangulationDialog* triangulationDialog_;
 
     TourDialog* td_;
 
     void setUpQVTKWindow(void);
-
-    void clearViewer();
-
-    void loadPointsCloudFileAndPlot(QString filename);
 
     void connect_SIGNAL_SLOT();
 
@@ -81,6 +77,17 @@ public:
     }
 
     inline BoundingBox& getBoundingBox () {return bb;}
+
+    void renderASnapshot(QPixmap& pixmap,
+                const QPoint & targetOffset= QPoint(),
+                const QRegion & sourceRegion = QRegion()
+            );
+
+    const QRect& getSnapshotGeometry();
+
+    void disableResize();
+
+    void enableResize();
 
 
 protected:

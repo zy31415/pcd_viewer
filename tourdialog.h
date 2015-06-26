@@ -8,6 +8,9 @@
 #include <QDialog>
 #include <QAbstractButton>
 
+// opencv
+#include <opencv2/opencv.hpp>
+
 // This project
 
 class PCLViewer;
@@ -22,7 +25,7 @@ class TourDialog : public QDialog
 
 public:
     TourDialog(QWidget *parent = 0);
-    ~TourDialog() { delete ui;}
+    ~TourDialog();
 
 private:
     Ui::TourDialog *ui;
@@ -31,20 +34,34 @@ private:
     PCLViewer* pclViewer_; // parent widget
 
     double alpha;
+    cv::VideoWriter* videoWriter_;
+
+    int frame_width, frame_height, image_quality;
+
 
     void button_apply();
     void button_cancel() {}
     void button_ok() {}
+
+    int getTourStyleSelection();
+
+    void initRecording();
+
+    void detectFrameSize();
 
 public slots:
     void onButton(QAbstractButton *button);
 
     void errorString(QString str) { std::cout<<str.toStdString()<<std::endl;}
 
-    void tour();
+    void oneStepAroundY();
+    void tourFinished();
+
 
 signals:
     void click_apply();
+    void finished();
+    void error(QString err);
 };
 
 #endif // TOURDIALOG_H

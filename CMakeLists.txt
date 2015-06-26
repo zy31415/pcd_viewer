@@ -4,8 +4,9 @@ project      (pcd_viewer)
 find_package (Qt4 REQUIRED)
 find_package (VTK REQUIRED)
 find_package (PCL 1.8.0 REQUIRED)
+find_package (OpenCV REQUIRED)
 
-include_directories (${PCL_INCLUDE_DIRS})
+include_directories (${PCL_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 link_directories    (${PCL_LIBRARY_DIRS})
 add_definitions     (${PCL_DEFINITIONS})
 
@@ -16,7 +17,7 @@ set  (project_SOURCES main.cpp pclviewer.cpp colordialog.cpp triangulationdialog
 
 set  (project_HEADERS pclviewer.h colordialog.h triangulationdialog.h
                 triangulation_meshes.h setcameradialog.h boundingbox.h worker.h
-                setcameradialog.h tourdialog.h
+                setcameradialog.h tourdialog.h asmopencv.h
         )
 
 set  (project_FORMS pclviewer.ui colordialog.ui triangulationdialog.ui
@@ -33,10 +34,10 @@ ADD_DEFINITIONS (${QT_DEFINITIONS})
 qt4_add_resources(UI_RESOURCES resources.qrc)
 
 ADD_EXECUTABLE  (pcd_viewer ${project_SOURCES}
-                                ${project_FORMS_HEADERS}
-                                ${project_HEADERS_MOC}
-                                ${UI_RESOURCES}
+                            ${project_FORMS_HEADERS}
+                            ${project_HEADERS_MOC}
+                            ${UI_RESOURCES}
                 )
 
-TARGET_LINK_LIBRARIES (pcd_viewer ${QT_LIBRARIES} ${PCL_LIBRARIES} ${VTK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES (pcd_viewer ${QT_LIBRARIES} ${PCL_LIBRARIES} ${VTK_LIBRARIES} ${OpenCV_LIBS} pthread)
 

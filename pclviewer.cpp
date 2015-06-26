@@ -18,7 +18,6 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // Note: the order of initialization is very important.
     //  viewer_ should be initialized before other dialogs.
     viewer_(new pcl::visualization::PCLVisualizer ("viewer", false)),
-    cdialog(new ColorDialog(this)),
     triangulationDialog_(new TriangulationDialog(this)),
     td_(new TourDialog(this)),
     cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
@@ -52,17 +51,19 @@ PCLViewer::PCLViewer (QWidget *parent) :
     bb.update(cloud_);
 
     // Color the randomly generated cloud
-    colorCloudDistances ();
+    colorCloudDistances();
 
     viewer_->addPointCloud(cloud_, "cloud");
     viewer_->resetCamera();
     ui->qvtkWidget->update();
+
+    cdialog_ = new ColorDialog(this);
 }
 
 PCLViewer::~PCLViewer ()
 {
     delete ui;
-    delete cdialog;
+    delete cdialog_;
     delete triangulationDialog_;
     delete td_;
 }
@@ -103,19 +104,17 @@ void PCLViewer::setUpQVTKWindow() {
 
 void PCLViewer::loadFileButtonPressed ()
 {
-    QString filename = QFileDialog::getOpenFileName (this, tr ("Open point cloud"), ".", tr ("Point cloud data (*.pcd *.ply)"));
+    QString filename = QFileDialog::getOpenFileName(
+                this,
+                tr ("Open point cloud"),
+                ".",
+                tr ("Point cloud data (*.pcd *.ply)"));
 
-    PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
-
-    loadPointsCloudFileAndPlot(filename);
-}
-
-void PCLViewer::loadPointsCloudFileAndPlot(QString filename) {
-
+    PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str());
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_tmp (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
     if (filename.isEmpty ())
-    return;
+        return;
 
     int return_status;
     if (filename.endsWith (".pcd", Qt::CaseInsensitive))
@@ -137,17 +136,30 @@ void PCLViewer::loadPointsCloudFileAndPlot(QString filename) {
         pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
     }
 
-    bb.update(cloud_);
+    //bb.update(cloud_);
 
     colorCloudDistances ();
 
-    clearViewer();
+    // clear screen:
+    //viewer_->removeAllShapes();
+    //viewer_->removeAllPointClouds();
 
-    viewer_->addPointCloud (cloud_, "cloud");
-
+    // add new point could
+    viewer_->updatePointCloud (cloud_, "cloud");
     viewer_->resetCamera ();
     ui->qvtkWidget->update ();
+
+    // Update widgests:
+//    triangulationDialog_->close();
+//    delete triangulationDialog_;
+//    triangulationDialog_ = new TriangulationDialog(this);
+
+//    cdialog_->close();
+//    delete cdialog_;
+//    cdialog_ = new ColorDialog(this);
+
 }
+
 
 void PCLViewer::saveFileButtonPressed ()
 {
@@ -178,12 +190,12 @@ void PCLViewer::saveFileButtonPressed ()
 }
 
 void PCLViewer::axisChosen() {
-    filtering_axis_= cdialog -> get_color_changing_axis();
+    filtering_axis_= cdialog_ -> get_color_changing_axis();
     updatePointCloud();
 }
 
 void PCLViewer::lookUpTableChosen() {
-    color_mode_ = cdialog -> get_look_up_table();
+    color_mode_ = cdialog_ -> get_look_up_table();
     updatePointCloud();
 }
 
@@ -277,7 +289,7 @@ void PCLViewer::about() {
 }
 
 void PCLViewer::color_mode_dialog() {
-    cdialog->show();
+    cdialog_->show();
 }
 
 void PCLViewer::removePointsCloudFromView() {
@@ -299,16 +311,6 @@ void PCLViewer::update() {
 }
 
 
-void PCLViewer::clearViewer() {
-    viewer_->removeAllShapes();
-    viewer_->removeAllPointClouds();
-
-    triangulationDialog_->close();
-    delete triangulationDialog_;
-    triangulationDialog_ = new TriangulationDialog(this);
-
-}
-
 void PCLViewer::onTour() {
     td_->show();
 }
@@ -329,14 +331,35 @@ void PCLViewer::onSnapshot(){
     if ( extension == "")
         filename += ".png";
 
-    QRect rect = ui->qvtkWidget->geometry();
-    QPixmap pixmap(rect);
-    ui->qvtkWidget->render(&pixmap, QPoint(), QRegion(rect));
+
+    QRect rect = getSnapshotGeometry();
+    QPixmap pixmap(rect.size());
+    renderASnapshot(pixmap, QPoint(), QRegion(rect));
     pixmap.save(filename);
 
 }
 
+const QRect& PCLViewer::getSnapshotGeometry() {
+    return ui->qvtkWidget->geometry();
+}
+
+void PCLViewer::renderASnapshot(QPixmap& pixmap,
+            const QPoint & targetOffset,
+            const QRegion & sourceRegion) {
+    ui->qvtkWidget->render(&pixmap, targetOffset, sourceRegion);
+}
+
 void PCLViewer::onSetCamera() {
-    SetCameraDialog dialog;
+    SetCameraDialog dialog(this);
     dialog.exec();
+}
+
+void PCLViewer::disableResize() {
+    this->setFixedSize(this->size());
+}
+
+
+void PCLViewer::enableResize() {
+    this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
 }

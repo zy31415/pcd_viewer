@@ -16,7 +16,7 @@ public:
     ~Worker(){}
 
 signals:
-    void click_apply();
+    void moveOneStep();
     void finished();
     void error(QString err);
 

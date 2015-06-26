@@ -5,41 +5,52 @@
 
 #include "pclviewer.h"
 
+int ColorDialog::DEFAULT_POINT_SIZE = 2;
+
 ColorDialog::ColorDialog(QWidget *parent) :
     QDialog(parent),
-    cdialog(new Ui::ColorDialog)
+    ui(new Ui::ColorDialog),
+    point_size(DEFAULT_POINT_SIZE)
 {
-    cdialog->setupUi(this);
+    ui->setupUi(this);
+
+    pclViewer_ = (PCLViewer*)parentWidget();
+    viewer_ = pclViewer_ -> getViewer();
+
+    ui->lineEdit->setText(QString::number(point_size));
 
     //
-    connect (cdialog->radioButton_x_2, SIGNAL(clicked ()), parent, SLOT(axisChosen ()));
-    connect (cdialog->radioButton_y_2, SIGNAL(clicked ()), parent, SLOT(axisChosen ()));
-    connect (cdialog->radioButton_z_2, SIGNAL(clicked ()), parent, SLOT(axisChosen ()));
+    connect (ui->radioButton_x_2, SIGNAL(clicked ()), parent, SLOT(axisChosen ()));
+    connect (ui->radioButton_y_2, SIGNAL(clicked ()), parent, SLOT(axisChosen ()));
+    connect (ui->radioButton_z_2, SIGNAL(clicked ()), parent, SLOT(axisChosen ()));
 
-    connect (cdialog -> radioButton_BlueRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
-    connect (cdialog -> radioButton_GreenMagenta_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
-    connect (cdialog -> radioButton_WhiteRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
-    connect (cdialog -> radioButton_GreyRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
-    connect (cdialog -> radioButton_Rainbow_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
+    connect (ui -> radioButton_BlueRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
+    connect (ui -> radioButton_GreenMagenta_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
+    connect (ui -> radioButton_WhiteRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
+    connect (ui -> radioButton_GreyRed_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
+    connect (ui -> radioButton_Rainbow_2, SIGNAL(clicked ()), parent, SLOT(lookUpTableChosen()));
 
-    connect (cdialog -> checkBox, SIGNAL(toggled(bool)), this, SLOT(onIfShowDataPoints()));
+    connect (ui -> checkBox, SIGNAL(toggled(bool)), this, SLOT(onIfShowDataPoints()));
 
+    connect (ui -> lineEdit, SIGNAL(editingFinished()), this, SLOT(onChangePointSize()));
 
+    viewer_->setPointCloudRenderingProperties(
+                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, point_size, "cloud");
 }
 
 ColorDialog::~ColorDialog() {
-    delete cdialog;
+    delete ui;
 }
 
 int ColorDialog::get_color_changing_axis() {
     // Only 1 of the button can be checked at the time (mutual exclusivity) in a group of radio buttons
-    if (cdialog->radioButton_x_2->isChecked ())
+    if (ui->radioButton_x_2->isChecked ())
     {
       PCL_INFO("x filtering chosen\n");
       return 0;
     }
 
-    if (cdialog->radioButton_y_2->isChecked ()) {
+    if (ui->radioButton_y_2->isChecked ()) {
         PCL_INFO("y filtering chosen\n");
         return 1;
     }
@@ -51,22 +62,22 @@ int ColorDialog::get_color_changing_axis() {
 
 int ColorDialog::get_look_up_table() {
     // Only 1 of the button can be checked at the time (mutual exclusivity) in a group of radio buttons
-    if (cdialog -> radioButton_BlueRed_2->isChecked ()) {
+    if (ui -> radioButton_BlueRed_2->isChecked ()) {
       PCL_INFO("Blue -> Red LUT chosen\n");
       return 0;
     }
 
-    if (cdialog -> radioButton_GreenMagenta_2->isChecked ()) {
+    if (ui -> radioButton_GreenMagenta_2->isChecked ()) {
       PCL_INFO("Green -> Magenta LUT chosen\n");
       return 1;
     }
 
-    if (cdialog -> radioButton_WhiteRed_2->isChecked ()) {
+    if (ui -> radioButton_WhiteRed_2->isChecked ()) {
       PCL_INFO("White -> Red LUT chosen\n");
       return 2;
     }
 
-    if (cdialog -> radioButton_GreyRed_2->isChecked ()) {
+    if (ui -> radioButton_GreyRed_2->isChecked ()) {
       PCL_INFO("Grey / Red LUT chosen\n");
       return 3;
     }
@@ -76,8 +87,15 @@ int ColorDialog::get_look_up_table() {
 }
 
 void ColorDialog::onIfShowDataPoints() {
-    if (cdialog->checkBox->isChecked())
+    if (ui->checkBox->isChecked())
         ((PCLViewer*)parentWidget())->addPointsCloudToView();
     else
         ((PCLViewer*)parentWidget())->removePointsCloudFromView();
+}
+
+void ColorDialog::onChangePointSize() {
+    point_size = ui->lineEdit->text().toInt();
+
+    viewer_->setPointCloudRenderingProperties(
+                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, point_size, "cloud");
 }

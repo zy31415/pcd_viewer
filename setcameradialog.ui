@@ -11,7 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Set camera dialog</string>
+  </property>
+  <property name="toolTip">
+   <string>Set camera position, view and up direction.</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
