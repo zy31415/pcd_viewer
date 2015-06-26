@@ -12,7 +12,6 @@
 
 #include "worker.h"
 #include "boundingbox.h"
-#include "asmopencv.h"
 
 TourDialog::TourDialog(QWidget *parent) :
     QDialog(parent),
