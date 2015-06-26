@@ -30,8 +30,7 @@ HEADERS  += pclviewer.h \
     tourdialog.h \
     boundingbox.h \
     worker.h \
-    setcameradialog.h \
-    asmopencv.h
+    setcameradialog.h
 
 FORMS    += pclviewer.ui \
     colordialog.ui \

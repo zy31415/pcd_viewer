@@ -17,7 +17,7 @@ set  (project_SOURCES main.cpp pclviewer.cpp colordialog.cpp triangulationdialog
 
 set  (project_HEADERS pclviewer.h colordialog.h triangulationdialog.h
                 triangulation_meshes.h setcameradialog.h boundingbox.h worker.h
-                setcameradialog.h tourdialog.h asmopencv.h
+                setcameradialog.h tourdialog.h
         )
 
 set  (project_FORMS pclviewer.ui colordialog.ui triangulationdialog.ui
