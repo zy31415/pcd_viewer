@@ -53,7 +53,8 @@ PCLViewer::PCLViewer (QWidget *parent) :
     // Color the randomly generated cloud
     colorCloudDistances();
 
-    viewer_->addPointCloud(cloud_, "cloud");
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
+    viewer_->addPointCloud(cloud_, rgb, "cloud");
     viewer_->resetCamera();
     ui->qvtkWidget->update();
 
@@ -141,22 +142,23 @@ void PCLViewer::loadFileButtonPressed ()
     colorCloudDistances ();
 
     // clear screen:
-    //viewer_->removeAllShapes();
-    //viewer_->removeAllPointClouds();
+    viewer_->removeAllShapes();
+    viewer_->removeAllPointClouds();
 
     // add new point could
-    viewer_->updatePointCloud (cloud_, "cloud");
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
+    viewer_->addPointCloud (cloud_, rgb, "cloud");
     viewer_->resetCamera ();
     ui->qvtkWidget->update ();
 
     // Update widgests:
-//    triangulationDialog_->close();
-//    delete triangulationDialog_;
-//    triangulationDialog_ = new TriangulationDialog(this);
+    triangulationDialog_->close();
+    delete triangulationDialog_;
+    triangulationDialog_ = new TriangulationDialog(this);
 
-//    cdialog_->close();
-//    delete cdialog_;
-//    cdialog_ = new ColorDialog(this);
+    cdialog_->close();
+    delete cdialog_;
+    cdialog_ = new ColorDialog(this);
 
 }
 
@@ -201,7 +203,8 @@ void PCLViewer::lookUpTableChosen() {
 
 void PCLViewer::updatePointCloud() {
     colorCloudDistances ();
-    viewer_->updatePointCloud (cloud_, "cloud");
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
+    viewer_->updatePointCloud (cloud_, rgb, "cloud");
     ui->qvtkWidget->update ();
 }
 
@@ -298,7 +301,8 @@ void PCLViewer::removePointsCloudFromView() {
 }
 
 void PCLViewer::addPointsCloudToView() {
-    viewer_->addPointCloud(cloud_, "cloud");
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
+    viewer_->addPointCloud(cloud_, rgb, "cloud");
     ui->qvtkWidget->update();
 }
 
