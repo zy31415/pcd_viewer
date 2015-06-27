@@ -19,6 +19,8 @@ private:
     /** @brief Bounding box of the points cloud data. */
     BoundingBox bb;
 
+    QString filename;
+
     /** @brief Points Cloud data */
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_;
 
@@ -47,7 +49,8 @@ public:
     explicit DataModel(QObject *parent = 0);
     ~DataModel();
 
-    void readPCDFile(QString filename);
+    void readPCDFile(const QString filename);
+    void savePCDFile(const QString filename);
 
     void computeTriangulationMesh();
 

@@ -6,6 +6,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/filter.h>
+#include <pcl/visualization/pcl_visualizer.h>
 
 DataModel::DataModel(QObject *parent) :
     QObject(parent),
@@ -115,7 +116,7 @@ void DataModel::colorPCDAlongAxis ()
   }
 }
 
-void DataModel::readPCDFile(QString filename)
+void DataModel::readPCDFile(const QString filename)
 {
     PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str());
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_tmp (new pcl::PointCloud<pcl::PointXYZRGBA>);
@@ -134,6 +135,8 @@ void DataModel::readPCDFile(QString filename)
         return;
     }
 
+    this->filename = filename;
+
     // If point cloud contains NaN values, remove them before updating the visualizer point cloud
     if (cloud_tmp->is_dense)
         pcl::copyPointCloud (*cloud_tmp, *cloud_);
@@ -143,10 +146,11 @@ void DataModel::readPCDFile(QString filename)
         pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
     }
 
-    //bb.update(cloud_);
+    bb.update(cloud_);
 
     colorPCDAlongAxis ();
 
+    // Tell the MainWindow to update the viewer.
     emit updateViewer();
 }
 
@@ -159,3 +163,29 @@ void DataModel::computeTriangulationMesh() {
                 );
 }
 
+void DataModel::savePCDFile(const QString filename) {
+
+    PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
+
+    if (filename.isEmpty ())
+        return;
+
+    int return_status;
+
+    if (filename.endsWith (".pcd", Qt::CaseInsensitive))
+        return_status = pcl::io::savePCDFileBinary (filename.toStdString(), cloud_);
+
+    else if (filename.endsWith (".ply", Qt::CaseInsensitive))
+        return_status = pcl::io::savePLYFileBinary (filename.toStdString(), cloud_);
+    else
+    {
+      filename.append(".pcd");
+      return_status = pcl::io::savePCDFileBinary (filename.toStdString(), cloud_);
+    }
+
+    if (return_status != 0)
+    {
+      PCL_ERROR("Error writing point cloud %s\n", filename.toStdString().c_str());
+      return;
+    }
+}

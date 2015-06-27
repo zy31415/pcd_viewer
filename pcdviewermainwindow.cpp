@@ -10,8 +10,6 @@
 
 #include <boost/filesystem.hpp>
 
-#include <pcl/io/ply_io.h>
-#include <pcl/io/pcd_io.h>
 
 PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     QMainWindow (parent),
@@ -102,56 +100,20 @@ void PCDViewerMainWindow::loadFileButtonPressed ()
                 tr ("Point cloud data (*.pcd *.ply)"));
 
     data_->readPCDFile(filename);
-
-//    // clear screen:
-//    viewer_->removeAllShapes();
-//    viewer_->removeAllPointClouds();
-
-//    // add new point could
-//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
-//    viewer_->addPointCloud (cloud_, rgb, "cloud");
-//    viewer_->resetCamera ();
-//    ui->qvtkWidget->update ();
-
-//    // Update widgests:
-//    triangulationDialog_->close();
-//    delete triangulationDialog_;
-//    triangulationDialog_ = new TriangulationDialog(this);
-
-//    cdialog_->close();
-//    delete cdialog_;
-//    cdialog_ = new ColorDialog(this);
-
 }
 
 
 void PCDViewerMainWindow::saveFileButtonPressed ()
-{
-  // You might want to change "/home/" if you're not on an *nix platform
-  QString filename = QFileDialog::getSaveFileName(this, tr ("Open point cloud"), "/home/", tr ("Point cloud data (*.pcd *.ply)"));
+{    
+    QString filename = QFileDialog::getSaveFileName(
+              this,
+              tr ("Open point cloud"),
+              "pointcloud.pcd",
+              tr ("Point cloud data (*.pcd *.ply)"));
 
-  PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
-
-  if (filename.isEmpty ())
-    return;
-
-  int return_status;
-  if (filename.endsWith (".pcd", Qt::CaseInsensitive))
-    return_status = pcl::io::savePCDFileBinary (filename.toStdString (), *data_->getCloud());
-  else if (filename.endsWith (".thisply", Qt::CaseInsensitive))
-    return_status = pcl::io::savePLYFileBinary (filename.toStdString (), *data_->getCloud());
-  else
-  {
-    filename.append(".ply");
-    return_status = pcl::io::savePLYFileBinary (filename.toStdString (), *data_->getCloud());
-  }
-
-  if (return_status != 0)
-  {
-    PCL_ERROR("Error writing point cloud %s\n", filename.toStdString ().c_str ());
-    return;
-  }
+    data_->savePCDFile(filename);
 }
+
 
 void PCDViewerMainWindow::axisChosen() {
 //    filtering_axis_= cdialog_ -> get_color_changing_axis();
