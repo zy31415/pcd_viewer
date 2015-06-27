@@ -11,7 +11,10 @@
 DataModel::DataModel(QObject *parent) :
     QObject(parent),
     filtering_axis_(1),  // = y
-    color_mode_(4) // = Rainbow
+    color_mode_(4), // = Rainbow
+    point_size(3),
+    if_show_data_points(true),
+    if_show_meshes(false)
 {
     genRandomPCDWithinUnitBox();
 }
@@ -151,7 +154,7 @@ void DataModel::readPCDFile(const QString filename)
     colorPCDAlongAxis ();
 
     // Tell the MainWindow to update the viewer.
-    emit updateViewer();
+    emit onDrawCloudData();
 }
 
 
@@ -163,7 +166,7 @@ void DataModel::computeTriangulationMesh() {
                 );
 }
 
-void DataModel::savePCDFile(const QString filename) {
+void DataModel::savePCDFile(QString filename) {
 
     PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str ());
 
@@ -173,14 +176,14 @@ void DataModel::savePCDFile(const QString filename) {
     int return_status;
 
     if (filename.endsWith (".pcd", Qt::CaseInsensitive))
-        return_status = pcl::io::savePCDFileBinary (filename.toStdString(), cloud_);
+        return_status = pcl::io::savePCDFileBinary (filename.toStdString(), *cloud_);
 
     else if (filename.endsWith (".ply", Qt::CaseInsensitive))
-        return_status = pcl::io::savePLYFileBinary (filename.toStdString(), cloud_);
+        return_status = pcl::io::savePLYFileBinary (filename.toStdString(), *cloud_);
     else
     {
       filename.append(".pcd");
-      return_status = pcl::io::savePCDFileBinary (filename.toStdString(), cloud_);
+      return_status = pcl::io::savePCDFileBinary (filename.toStdString(), *cloud_);
     }
 
     if (return_status != 0)
@@ -188,4 +191,49 @@ void DataModel::savePCDFile(const QString filename) {
       PCL_ERROR("Error writing point cloud %s\n", filename.toStdString().c_str());
       return;
     }
+}
+
+void DataModel::setPointSize(int point_size)
+{
+    this->point_size = point_size;
+    emit onDrawPointSize();
+}
+
+void DataModel::setIfShowDataPoints(bool if_show_data_points) {
+    this -> if_show_data_points = if_show_data_points;
+    emit onIfShowDataPoints();
+}
+
+
+int DataModel::getColorAxis() {
+    return filtering_axis_;
+}
+
+void DataModel::setColorAxis(int axis) {
+    filtering_axis_ = axis;
+    colorPCDAlongAxis();
+    emit onDrawCloudData();
+}
+
+int DataModel::getColorLookUpTable() {
+    return color_mode_;
+}
+
+void DataModel::setColorLookUpTable(int table)
+{
+    color_mode_ = table;
+    colorPCDAlongAxis();
+    emit onDrawCloudData();
+}
+
+void DataModel::setMeshing(bool if_show_meshes,
+                           const TriangulationParameters& par)
+{
+    this->if_show_meshes = if_show_meshes;
+    if (if_show_meshes) {
+        computeTriangulationMesh();
+        emit onIfShowMeshes();
+    }
+
+
 }

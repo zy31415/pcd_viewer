@@ -16,7 +16,6 @@
 #include <vtkRenderWindow.h>
 
 // this project
-#include "colordialog.h"
 #include "triangulationdialog.h"
 #include "boundingbox.h"
 #include "tourdialog.h"
@@ -41,8 +40,6 @@ private:
 
     DataModel* data_;
 
-
-    ColorDialog* cdialog_;
     TriangulationDialog* triangulationDialog_;
 
     TourDialog* td_;
@@ -87,10 +84,10 @@ protected:
 
 public slots:
     /** @brief Triggered whenever the "Save file" button is clicked */
-    void saveFileButtonPressed ();
+    void onSaveFileButton ();
 
     /** @brief Triggered whenever the "Load file" button is clicked */
-    void loadFileButtonPressed ();
+    void onLoadFileButton ();
 
     /** @brief Triggered whenever a button in the "Color on axis" group is clicked */
     void axisChosen ();
@@ -99,9 +96,11 @@ public slots:
     void lookUpTableChosen ();
 
     /** @brief About the program.*/
-    void about();
+    void onAbout();
 
-    void color_mode_dialog();
+    void onClose() {close();}
+
+    void onColorMode();
 
     void onTriangulation();
 
@@ -109,7 +108,9 @@ public slots:
 
     void onSnapshot();
 
-    void updateViewer();
+    void onDrawCloudData();
+    void onDrawPointSize();
+    void onIfShowDataPoints();
 
 private slots:
     void onSetCamera();

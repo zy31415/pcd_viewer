@@ -96,7 +96,7 @@
      <number>9</number>
     </property>
     <item>
-     <widget class="QRadioButton" name="radioButton_x_2">
+     <widget class="QRadioButton" name="radioButton_x">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -113,7 +113,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_y_2">
+     <widget class="QRadioButton" name="radioButton_y">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -130,7 +130,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_z_2">
+     <widget class="QRadioButton" name="radioButton_z">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -181,7 +181,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QRadioButton" name="radioButton_BlueRed_2">
+     <widget class="QRadioButton" name="radioButton_BlueRed">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -201,7 +201,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_GreenMagenta_2">
+     <widget class="QRadioButton" name="radioButton_GreenMagenta">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -221,7 +221,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_WhiteRed_2">
+     <widget class="QRadioButton" name="radioButton_WhiteRed">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -241,7 +241,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_GreyRed_2">
+     <widget class="QRadioButton" name="radioButton_GreyRed">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -256,12 +256,12 @@
        </font>
       </property>
       <property name="text">
-       <string>Grey / red</string>
+       <string>Grey to red</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_Rainbow_2">
+     <widget class="QRadioButton" name="radioButton_Rainbow">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -298,7 +298,7 @@
     <string>&amp;OK</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox">
+  <widget class="QCheckBox" name="checkBox_if_show_data_points">
    <property name="geometry">
     <rect>
      <x>10</x>

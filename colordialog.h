@@ -6,6 +6,8 @@
 
 #include <QDialog>
 
+#include "datamodel.h"
+
 class PCDViewerMainWindow;
 
 namespace Ui {
@@ -17,23 +19,19 @@ class ColorDialog : public QDialog {
 
 private:
     Ui::ColorDialog* ui;
-    int point_size;
-
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    PCDViewerMainWindow* pclViewer_; // parent widget
+    DataModel* data_;
 
 public:
-    ColorDialog(QWidget *parent = 0);
+    ColorDialog(DataModel* data,
+                QWidget *parent = 0);
     virtual ~ColorDialog();
-
-    static int DEFAULT_POINT_SIZE;
-
-    int get_color_changing_axis();
-    int get_look_up_table();
 
 public slots:
     void onIfShowDataPoints();
     void onChangePointSize();
+    void onAxisChosen();
+    void onLookUpTableChosen();
+
 };
 
 

@@ -1,14 +1,14 @@
 #include "pcdviewermainwindow.h"
 #include "../build/ui_pcdviewermainwindow.h"
 
+#include <QThread>
+#include <string>
+#include <boost/filesystem.hpp>
+
 #include "colordialog.h"
 #include "worker.h"
 #include "setcameradialog.h"
-
-#include <QThread>
-#include <string>
-
-#include <boost/filesystem.hpp>
+#include "colordialog.h"
 
 
 PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
@@ -22,10 +22,7 @@ PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
 {
     ui->setupUi (this);
 
-    //ui->centralwidget->layout()->addWidget(new );
-
     this->setWindowTitle ("PCD file viewer");
-
 
     data_ = new DataModel(this);
 
@@ -42,32 +39,29 @@ PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     viewer_->addPointCloud(data_->getCloud(), rgb, "cloud");
     viewer_->resetCamera();
     ui->qvtkWidget->update();
-
-    cdialog_ = new ColorDialog(this);
 }
 
 PCDViewerMainWindow::~PCDViewerMainWindow ()
 {
     delete ui;
     delete data_;
-    delete cdialog_;
     delete triangulationDialog_;
     delete td_;
 }
 
 void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
-    // Connect "Load" and "Save" buttons and their functions
-    connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(loadFileButtonPressed ()));
-    connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(saveFileButtonPressed ()));
+    // Connect "Load" and "Save" buttons with their slots
+    connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(onLoadFileButton ()));
+    connect(ui->action_Save, SIGNAL(triggered()), this, SLOT(onSaveFileButton ()));
 
-    // Connet File -> Close
-    connect(ui->action_Close, SIGNAL(triggered()), this, SLOT(close()));
+    // Connect File -> Close
+    connect(ui->action_Close, SIGNAL(triggered()), this, SLOT(onClose()));
 
-    // Connet Help -> About
-    connect(ui->action_About, SIGNAL(triggered()), this, SLOT(about()));
+    // Connect Help -> About
+    connect(ui->action_About, SIGNAL(triggered()), this, SLOT(onAbout()));
 
-    // connet View -> Color Mode
-    connect(ui->action_Color_Mode, SIGNAL(triggered()), this, SLOT(color_mode_dialog()));
+    // connect View -> Color Mode
+    connect(ui->action_Color_Mode, SIGNAL(triggered()), this, SLOT(onColorMode()));
 
     // connet View -> Triangulation
     connect(ui->action_Triangulation, SIGNAL(triggered()), this, SLOT(onTriangulation()));
@@ -79,7 +73,13 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
 
     connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCamera()));
 
-    connect(data_, SIGNAL(updateViewer()), this, SLOT(updateViewer()));
+
+    // connect DataModel to PCDViewerMainWindow, data changing signals
+    connect(data_, SIGNAL(onDrawCloudData()), this, SLOT(onDrawCloudData()));
+    connect(data_, SIGNAL(onDrawPointSize()), this, SLOT(onDrawPointSize()));
+    connect(data_, SIGNAL(onIfShowDataPoints()), this, SLOT(onIfShowDataPoints()));
+    connect(data_, SIGNAL(onIfShowMeshes()), this, SLOT(onIfShowMeshes()));
+
 
 }
 
@@ -91,7 +91,7 @@ void PCDViewerMainWindow::setUpQVTKWindow()
     ui->qvtkWidget->update ();
 }
 
-void PCDViewerMainWindow::loadFileButtonPressed ()
+void PCDViewerMainWindow::onLoadFileButton ()
 {
     QString filename = QFileDialog::getOpenFileName(
                 this,
@@ -103,7 +103,7 @@ void PCDViewerMainWindow::loadFileButtonPressed ()
 }
 
 
-void PCDViewerMainWindow::saveFileButtonPressed ()
+void PCDViewerMainWindow::onSaveFileButton ()
 {    
     QString filename = QFileDialog::getSaveFileName(
               this,
@@ -134,7 +134,7 @@ void PCDViewerMainWindow::updatePointCloud() {
 
 
 
-void PCDViewerMainWindow::about() {
+void PCDViewerMainWindow::onAbout() {
     QMessageBox msgBox(this);
     msgBox.setText("This is a poit cloud file GUI viewer.<br>"
                    "<b>Author</b>: Yang Zhang <br>"
@@ -142,8 +142,9 @@ void PCDViewerMainWindow::about() {
     msgBox.exec();
 }
 
-void PCDViewerMainWindow::color_mode_dialog() {
-    cdialog_->show();
+void PCDViewerMainWindow::onColorMode() {
+    ColorDialog cdialog(data_);
+    cdialog.exec();
 }
 
 void PCDViewerMainWindow::removePointsCloudFromView() {
@@ -158,7 +159,8 @@ void PCDViewerMainWindow::addPointsCloudToView() {
 }
 
 void PCDViewerMainWindow::onTriangulation(){
-    triangulationDialog_->show();
+    TriangulationDialog tridia(data_);
+    tridia.exec();
 }
 
 void PCDViewerMainWindow::update() {
@@ -219,8 +221,8 @@ void PCDViewerMainWindow::enableResize() {
 
 }
 
-void PCDViewerMainWindow::updateViewer() {
-    // clear screen:
+void PCDViewerMainWindow::onDrawCloudData() {
+    // add / update point cloud data:
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(data_->getCloud());
 
     if (viewer_->contains("cloud"))
@@ -228,17 +230,47 @@ void PCDViewerMainWindow::updateViewer() {
     else
         viewer_->addPointCloud (data_->getCloud(), rgb, "cloud");
 
+    // set point size
+    viewer_->setPointCloudRenderingProperties(
+                pcl::visualization::PCL_VISUALIZER_POINT_SIZE,
+                data_->getPointSize(),
+                "cloud");
+
     viewer_->resetCamera ();
     ui->qvtkWidget->update ();
 
+}
 
-    // Update widgests:
-//    triangulationDialog_->close();
-//    delete triangulationDialog_;
-//    triangulationDialog_ = new TriangulationDialog(this);
+void PCDViewerMainWindow::onDrawPointSize(){
+    viewer_->setPointCloudRenderingProperties(
+                pcl::visualization::PCL_VISUALIZER_POINT_SIZE,
+                data_->getPointSize(),
+                "cloud");
+    std::cout<<data_->getPointSize()<<std::endl;
+    ui->qvtkWidget->update ();
+}
 
-//    cdialog_->close();
-//    delete cdialog_;
-//    cdialog_ = new ColorDialog(this);
+void PCDViewerMainWindow::onIfShowDataPoints(){
+    if (data_->getIfShowDataPoints())
+        onDrawCloudData();
+    else
+        if (viewer_->contains("cloud"))
+            viewer_->removePointCloud("cloud");
+
+    ui->qvtkWidget->update();
+}
+
+void PCDViewerMainWindow::onIfShowMeshes()
+{
+    if (data_->getIfShowMeshes())
+        onDrawMeshes();
+    else
+        if (viewer_->contains("meshes"))
+            viewer_->removePointCloud("meshes");
+
+}
+
+void PCDViewerMainWindow::onDrawMeshes()
+{
 
 }

@@ -102,6 +102,12 @@
    <property name="text">
     <string>&amp;Open ...</string>
    </property>
+   <property name="toolTip">
+    <string>Open a Point Cloud Data file (*.pcd *.ply).</string>
+   </property>
+   <property name="statusTip">
+    <string>Click to open a Point Cloud Data file (*.pcd *.ply).</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
@@ -134,6 +140,12 @@
    </property>
    <property name="text">
     <string>&amp;Save As ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save a copy of the data in display</string>
+   </property>
+   <property name="statusTip">
+    <string>Click to save a copy of the data in display as a Point Cloud Data file (*.pcd *.ply).</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>

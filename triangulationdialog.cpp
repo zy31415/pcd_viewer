@@ -1,17 +1,20 @@
-#include <stdio.h>
-#include <string>
-
 #include "triangulationdialog.h"
 #include "../build/ui_triangulationdialog.h"
 
-#include "pcdviewermainwindow.h"
+#include <stdio.h>
+#include <string>
 
-TriangulationDialog::TriangulationDialog(QWidget *parent) :
+#include "pcdviewermainwindow.h"
+#include "triangulation_meshes.h"
+
+
+TriangulationDialog::TriangulationDialog(DataModel data_, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TriangulationDialog),
-    if_plot_meshes(false)
+    data_(data_)
 {
     ui->setupUi(this);
+
     setParametersToDialog();
 
     meshes_.reset(new pcl::PolygonMesh);
@@ -23,23 +26,31 @@ TriangulationDialog::TriangulationDialog(QWidget *parent) :
     viewer_ = pclViewer_ -> getViewer();
 }
 
-void TriangulationDialog::setParametersToDialog() {
-    ui->lineEdit_k->setText(QString::number(triangulation_parameters.k));
-    ui->lineEdit_SearchRadius->setText(QString::number(triangulation_parameters.search_radius));
-    ui->lineEdit_Mu->setText(QString::number(triangulation_parameters.mu));
-    ui->lineEdit_MaxNN->setText(QString::number(triangulation_parameters.max_NN));
-    ui->lineEdit_MaxSurfaceAngle->setText(QString::number(triangulation_parameters.max_surface_angle*180./PI));
-    ui->lineEdit_MinAngle->setText(QString::number(triangulation_parameters.min_angle*180./PI));
-    ui->lineEdit_MaximumAngle->setText(QString::number(triangulation_parameters.max_angle*180./PI));
-    ui->checkBox_is_normal_consistency->setChecked(triangulation_parameters.is_normal_consistency);
+TriangulationDialog::~TriangulationDialog()
+{
+    delete ui;
+}
 
-    ui->checkBox_if_plot_meshes->setChecked(if_plot_meshes);
+void TriangulationDialog::setParametersToDialog()
+{
+    TriangulationParameters par = data_->getTriangulationParameter();
+    ui->lineEdit_k->setText(QString::number(par.k));
+    ui->lineEdit_SearchRadius->setText(QString::number(par.search_radius));
+    ui->lineEdit_Mu->setText(QString::number(par.mu));
+    ui->lineEdit_MaxNN->setText(QString::number(par.max_NN));
+    ui->lineEdit_MaxSurfaceAngle->setText(QString::number(par.max_surface_angle*180./PI));
+    ui->lineEdit_MinAngle->setText(QString::number(par.min_angle*180./PI));
+    ui->lineEdit_MaximumAngle->setText(QString::number(par.max_angle*180./PI));
+    ui->checkBox_is_normal_consistency->setChecked(par.is_normal_consistency);
+
+    ui->checkBox_if_plot_meshes->setChecked(data_->get);
 
     setEnabled();
 }
 
-void TriangulationDialog::setEnabled() {
-    if_plot_meshes = ui->checkBox_if_plot_meshes->isChecked();
+void TriangulationDialog::setEnabled()
+{
+    bool if_plot_meshes = ui->checkBox_if_plot_meshes->isChecked();
     if (if_plot_meshes) {
         ui->lineEdit_k->setEnabled(true);
         ui->lineEdit_SearchRadius->setEnabled(true);
@@ -61,27 +72,26 @@ void TriangulationDialog::setEnabled() {
     }
 }
 
-void TriangulationDialog::getParametersFromDialog() {
-    triangulation_parameters.k = ui->lineEdit_k->text().toInt();
-    triangulation_parameters.search_radius = ui->lineEdit_SearchRadius->text().toDouble();
-    triangulation_parameters.mu = ui->lineEdit_Mu->text().toDouble();
-    triangulation_parameters.max_NN = ui->lineEdit_MaxNN->text().toDouble();
-    triangulation_parameters.max_surface_angle = ui->lineEdit_MaxSurfaceAngle->text().toDouble()*PI/180.;
-    triangulation_parameters.min_angle = ui->lineEdit_MinAngle->text().toDouble()*PI/180.;
-    triangulation_parameters.max_angle = ui->lineEdit_MaximumAngle->text().toDouble()*PI/180.;
-    triangulation_parameters.is_normal_consistency = ui->checkBox_is_normal_consistency->isChecked();
-    if_plot_meshes = ui->checkBox_if_plot_meshes->isChecked();
+TriangulationParameters TriangulationDialog::getTriangulationParametersFromDialog()
+{
+    TriangulationParameters par;
+
+    par.k = ui->lineEdit_k->text().toInt();
+    par.search_radius = ui->lineEdit_SearchRadius->text().toDouble();
+    par.mu = ui->lineEdit_Mu->text().toDouble();
+    par.max_NN = ui->lineEdit_MaxNN->text().toDouble();
+    par.max_surface_angle = ui->lineEdit_MaxSurfaceAngle->text().toDouble()*PI/180.;
+    par.min_angle = ui->lineEdit_MinAngle->text().toDouble()*PI/180.;
+    par.max_angle = ui->lineEdit_MaximumAngle->text().toDouble()*PI/180.;
+    par.is_normal_consistency = ui->checkBox_is_normal_consistency->isChecked();
+
+    return par;
 }
 
-void TriangulationDialog::computeTriangulationMesh() {
-
-//    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_ = pclViewer_->getPointsData();
-
-//    compute_triangulation_meshes(
-//                cloud_,
-//                meshes_,
-//                triangulation_parameters
-//                );
+void TriangulationDialog::computeTriangulationMesh()
+{
+    TriangulationParameters par = getTriangulationParametersFromDialog();
+    data_->setMeshing(ui->checkBox_if_plot_meshes->isChecked(), par);
 }
 
 void TriangulationDialog::onComputeTriangulationButton(QAbstractButton *button) {
@@ -102,24 +112,8 @@ void TriangulationDialog::onComputeTriangulationButton(QAbstractButton *button) 
 }
 
 
-void TriangulationDialog::button_apply() {
-//    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_ = pclViewer_ -> getPointsData();
-
-//    if (if_plot_meshes) {
-//        getParametersFromDialog();
-//        computeTriangulationMesh();
-
-//        if (viewer_->contains("polygon"))
-//            viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "polygon");
-//        else
-//            viewer_->addPolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "polygon");
-
-//    } else
-//        if (viewer_->contains("polygon"))
-//            viewer_ -> removePolygonMesh("polygon");
-
-//    pclViewer_ -> update();
-
+void TriangulationDialog::button_apply() {      
+    computeTriangulationMesh();
 }
 
 void TriangulationDialog::button_ok() {
@@ -127,11 +121,8 @@ void TriangulationDialog::button_ok() {
 }
 
 void TriangulationDialog::button_cancel() {
-    setParametersToDialog();
 }
 
-TriangulationDialog::~TriangulationDialog() {
-    delete ui;
-}
+
 
 

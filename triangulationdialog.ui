@@ -50,13 +50,27 @@
       <widget class="QCheckBox" name="checkBox_if_plot_meshes">
        <property name="font">
         <font>
-         <pointsize>13</pointsize>
+         <pointsize>14</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
         <string>Plot Meshes</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Set triangulation parameters below:</string>
        </property>
       </widget>
      </item>

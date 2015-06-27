@@ -21,12 +21,15 @@ private:
 
     QString filename;
 
+    int point_size;
+    bool if_show_data_points;
+
     /** @brief Points Cloud data */
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_;
 
     /** @brief Points Cloud meshes */
     pcl::PolygonMesh::Ptr meshes_;
-
+    bool if_show_meshes;
     TriangulationParameters triangulation_parameters;
 
     /** @brief Color point cloud on X,Y or Z axis using a Look-Up Table (LUT)
@@ -50,15 +53,35 @@ public:
     ~DataModel();
 
     void readPCDFile(const QString filename);
-    void savePCDFile(const QString filename);
+    void savePCDFile(QString filename);
 
     void computeTriangulationMesh();
 
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr getCloud() {return cloud_;}
 
-signals:
+    int getPointSize() { return point_size;}
+    void setPointSize(int point_size);
 
-    void updateViewer();
+    bool getIfShowDataPoints() {return if_show_data_points; }
+    void setIfShowDataPoints(bool if_show_data_points);
+
+    int getColorAxis();
+    void setColorAxis(int axis);
+
+    int getColorLookUpTable();
+    void setColorLookUpTable(int table);
+
+    TriangulationParameters getTriangulationParameters() { return triangulation_parameters;}
+
+    bool getIfShowMeshes() {return if_show_meshes;}
+    void setMeshing(bool if_show_meshes,
+                    const TriangulationParameters& par);
+
+signals:
+    void onDrawCloudData();
+    void onDrawPointSize();
+    void onIfShowDataPoints();
+    void onIfShowMeshes();
 
 public slots:
 };

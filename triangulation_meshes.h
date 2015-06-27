@@ -29,6 +29,17 @@ struct TriangulationParameters {
         max_angle(120.*PI/180.),
         is_normal_consistency(true)
     {}
+
+    TriangulationParameters(TriangulationParameters& other) {
+        k = other.k;
+        search_radius = other.search_radius;
+        mu = other.mu;
+        max_NN = other.max_NN;
+        max_surface_angle = other.max_surface_angle;
+        min_angle = other.min_angle;
+        max_angle = other.max_angle;
+        is_normal_consistency = other.is_normal_consistency;
+    }
 };
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr
