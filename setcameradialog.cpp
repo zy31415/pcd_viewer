@@ -3,31 +3,28 @@
 #include "../build/ui_setcameradialog.h"
 #include "pcdviewermainwindow.h"
 
-SetCameraDialog::SetCameraDialog(QWidget *parent) :
+SetCameraDialog::SetCameraDialog(
+        const pcl::visualization::Camera& camera,
+        QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SetCameraDialog) {
-
+    ui(new Ui::SetCameraDialog)
+{
     ui->setupUi(this);
 
-    connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
+    connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
+            this, SLOT(onButton(QAbstractButton*)));
 
-    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
-    viewer_ = pclViewer_ -> getViewer();
+    ui->pos_x->setText(QString::number(camera.pos[0]));
+    ui->pos_y->setText(QString::number(camera.pos[1]));
+    ui->pos_z->setText(QString::number(camera.pos[2]));
 
-    std::vector<pcl::visualization::Camera> cameras;
-    viewer_ -> getCameras(cameras);
+    ui->view_x->setText(QString::number(camera.focal[0]));
+    ui->view_y->setText(QString::number(camera.focal[1]));
+    ui->view_z->setText(QString::number(camera.focal[2]));
 
-    ui->pos_x->setText(QString::number(cameras[0].pos[0]));
-    ui->pos_y->setText(QString::number(cameras[0].pos[1]));
-    ui->pos_z->setText(QString::number(cameras[0].pos[2]));
-
-    ui->view_x->setText(QString::number(cameras[0].focal[0]));
-    ui->view_y->setText(QString::number(cameras[0].focal[1]));
-    ui->view_z->setText(QString::number(cameras[0].focal[2]));
-
-    ui->up_x->setText(QString::number(cameras[0].view[0]));
-    ui->up_y->setText(QString::number(cameras[0].view[1]));
-    ui->up_z->setText(QString::number(cameras[0].view[2]));
+    ui->up_x->setText(QString::number(camera.view[0]));
+    ui->up_y->setText(QString::number(camera.view[1]));
+    ui->up_z->setText(QString::number(camera.view[2]));
 
 }
 
@@ -52,11 +49,8 @@ void SetCameraDialog::onButton(QAbstractButton *button) {
     }
 }
 
-void SetCameraDialog::button_apply() {
-    double pos_x, pos_y, pos_z,
-            view_x, view_y, view_z,
-            up_x, up_y, up_z;
-
+void SetCameraDialog::button_apply()
+{
     pos_x = ui->pos_x->text().toFloat();
     pos_y = ui->pos_y->text().toFloat();
     pos_z = ui->pos_z->text().toFloat();
@@ -66,22 +60,6 @@ void SetCameraDialog::button_apply() {
     up_x = ui->up_x->text().toFloat();
     up_y = ui->up_y->text().toFloat();
     up_z = ui->up_z->text().toFloat();
-
-    pcl::visualization::Camera camera;
-    camera.pos[0] = pos_x;
-    camera.pos[1] = pos_y;
-    camera.pos[2] = pos_z;
-
-    camera.view[0] = up_x;
-    camera.view[1] = up_y;
-    camera.view[2] = up_z;
-
-    camera.focal[0] = view_x;
-    camera.focal[1] = view_y;
-    camera.focal[2] = view_z;
-
-    emit setCameraPosition(camera);
-
 }
 
 

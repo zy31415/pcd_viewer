@@ -63,12 +63,12 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
     // connet View -> Triangulation
     connect(ui->action_Triangulation, SIGNAL(triggered()), this, SLOT(onTriangulation()));
 
-    // connet View -> Tour
+    // connect View -> Tour
     connect(ui->actionTour, SIGNAL(triggered()), this, SLOT(onTour()));
 
     connect(ui->actionSnapshot, SIGNAL(triggered()), this, SLOT(onSnapshot()));
 
-    // Set camera:
+    // set camera position
     connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCamera()));
 
     // connect DataModel to PCDViewerMainWindow, data changing signals
@@ -198,9 +198,16 @@ void PCDViewerMainWindow::renderASnapshot(QPixmap& pixmap,
 
 void PCDViewerMainWindow::onSetCamera()
 {
-    SetCameraDialog dialog(this);    
+    std::vector<pcl::visualization::Camera> cameras;
+    viewer_ -> getCameras(cameras);
+
+    SetCameraDialog dialog(cameras[0], this);
     dialog.exec();
-    dialog.camera
+
+    viewer_ -> setCameraPosition(dialog.getPosX(), dialog.getPosY(), dialog.getPosZ(),
+                                 dialog.getViewX(), dialog.getViewY(), dialog.getViewZ(),
+                                 dialog.getUpX(), dialog.getUpY(), dialog.getUpZ()
+                                 );
 }
 
 void PCDViewerMainWindow::disableResize()

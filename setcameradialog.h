@@ -19,14 +19,32 @@ class SetCameraDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SetCameraDialog(QWidget *parent = 0);
+    explicit SetCameraDialog(
+            const pcl::visualization::Camera& camera,
+            QWidget *parent = 0);
+
     ~SetCameraDialog();
+
+    double getPosX() {return pos_x;}
+    double getPosY() {return pos_y;}
+    double getPosZ() {return pos_z;}
+
+    double getViewX() {return view_x;}
+    double getViewY() {return view_y;}
+    double getViewZ() {return view_z;}
+
+    double getUpX() {return up_x;}
+    double getUpY() {return up_y;}
+    double getUpZ() {return up_z;}
+
+
 
 private:
     Ui::SetCameraDialog *ui;
 
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    PCDViewerMainWindow* pclViewer_; // parent widget
+    double pos_x, pos_y, pos_z,
+            view_x, view_y, view_z,
+            up_x, up_y, up_z;
 
     void button_apply();
 
@@ -34,7 +52,6 @@ public slots:
     void onButton(QAbstractButton *button);
 
 signals:
-    void setCameraPosition(const pcl::visualization::Camera camera);
 
 };
 
