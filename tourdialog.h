@@ -33,6 +33,9 @@ private:
     double alpha;
     cv::VideoWriter* videoWriter_;
 
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
+    PCDViewerMainWindow* pclViewer_; // parent widget
+
     int frame_width, frame_height, image_quality;
 
 

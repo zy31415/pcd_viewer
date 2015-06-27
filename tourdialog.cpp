@@ -109,69 +109,67 @@ void TourDialog::detectFrameSize(){
 }
 
 void TourDialog::oneStepAroundY() {
-//    double pos_x, pos_y, pos_z,
-//            view_x, view_y, view_z,
-//            up_x, up_y, up_z;
+    double pos_x, pos_y, pos_z,
+            view_x, view_y, view_z,
+            up_x, up_y, up_z;
 
 
-//    std::vector<pcl::visualization::Camera> cameras;
-//    viewer_ -> getCameras(cameras);
+    std::vector<pcl::visualization::Camera> cameras;
+    viewer_ -> getCameras(cameras);
 
 
-//    pos_x = cameras[0].pos[0];
-//    pos_y = cameras[0].pos[1];
-//    pos_z = cameras[0].pos[2];
+    pos_x = cameras[0].pos[0];
+    pos_y = cameras[0].pos[1];
+    pos_z = cameras[0].pos[2];
 
-//    view_x = cameras[0].focal[0];
-//    view_y = cameras[0].focal[1];
-//    view_z = cameras[0].focal[2];
+    view_x = cameras[0].focal[0];
+    view_y = cameras[0].focal[1];
+    view_z = cameras[0].focal[2];
 
-//    up_x = cameras[0].view[0];
-//    up_y = cameras[0].view[1];
-//    up_z = cameras[0].view[2];
+    up_x = cameras[0].view[0];
+    up_y = cameras[0].view[1];
+    up_z = cameras[0].view[2];
 
-//    BoundingBox bb = pclViewer_->getBoundingBox();
+    pos_y = (bb.get_max_y() + bb.get_min_y())/2.;
 
-//    pos_y = (bb.get_max_y() + bb.get_min_y())/2.;
+    double r = 4 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_z(),2.));
 
-//    double r = 4 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_z(),2.));
+    pos_z = r * cos(alpha);
+    pos_x = r * sin(alpha);
 
-//    pos_z = r * cos(alpha);
-//    pos_x = r * sin(alpha);
+    alpha += 0.04;
+    sleep(0.01);
+    viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
+                                 view_x, view_y, view_z,
+                                 up_x, up_y, up_z);
 
-//    alpha += 0.04;
-//    sleep(0.01);
-//    viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
-//                                 view_x, view_y, view_z,
-//                                 up_x, up_y, up_z);
+    if (videoWriter_) {
+        static int ii = 0;
 
-//    if (videoWriter_) {
-//        static int ii = 0;
+        char filename[50];
+        sprintf(filename, "out/%d.png", ii++);
+        cv::Mat frame;
+        frame = cv::imread(filename, CV_LOAD_IMAGE_COLOR);   // Read the file
 
-//        char filename[50];
-//        sprintf(filename, "out/%d.png", ii++);
-//        cv::Mat frame;
-//        frame = cv::imread(filename, CV_LOAD_IMAGE_COLOR);   // Read the file
+        QRect rect = pclViewer_->getSnapshotGeometry();
+        QPixmap pixmap(rect.size());
+        pclViewer_->renderASnapshot(pixmap, QPoint(), QRegion(rect));
 
-//        QRect rect = pclViewer_->getSnapshotGeometry();
-//        QPixmap pixmap(rect.size());
-//        pclViewer_->renderASnapshot(pixmap, QPoint(), QRegion(rect));
+        char buffer[50];
 
-//        char buffer[50];
+        tmpnam(buffer);
 
-//        tmpnam(buffer);
+        pixmap.save(buffer, "PNG", image_quality);
 
-//        pixmap.save(buffer, "PNG", image_quality);
-
-//        cv::Mat frame;
-//        frame = cv::imread(buffer, CV_LOAD_IMAGE_COLOR);   // Read the file
+        cv::Mat frame;
+        frame = cv::imread(buffer, CV_LOAD_IMAGE_COLOR);   // Read the file
 
 
-//        assert(frame.size().width == frame_width);
-//        assert(frame.size().height == frame_height);
+        assert(frame.size().width == frame_width);
+        assert(frame.size().height == frame_height);
 
-//        videoWriter_->write(frame);
-//    }
+        videoWriter_->write(frame);
+    }
 }
 
 

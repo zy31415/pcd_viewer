@@ -112,7 +112,6 @@ public slots:
 
     void onSetCamera(std::vector<double>);
 
-    void oneStepAroundY();
 
 private slots:
     void onSetCameraButtonPressed();
