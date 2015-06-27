@@ -12,6 +12,7 @@
 
 #include "worker.h"
 #include "boundingbox.h"
+#include "pcdviewermainwindow.h"
 
 TourDialog::TourDialog(QWidget *parent) :
     QDialog(parent),
@@ -20,11 +21,15 @@ TourDialog::TourDialog(QWidget *parent) :
     videoWriter_(0),
     frame_width(0),
     frame_height(0),
-    image_quality(100) {
-
+    image_quality(100)
+{
     ui->setupUi(this);
 
+    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
+    viewer_ = pclViewer_->getViewer();
+
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
+    connect(ui->pushButtonRec, SIGNAL(clicked()), this, SLOT(onRec()));
 
 
     ui->comboBox->addItem("Rotate around Y");
@@ -44,18 +49,18 @@ void TourDialog::onButton(QAbstractButton *button) {
     switch(standardButton) {
     // Standard buttons:
     case QDialogButtonBox::Ok:
-        button_apply();
+        //button_apply();
         break;
     case QDialogButtonBox::Cancel:
         button_cancel();
         break;
     case QDialogButtonBox::Apply:
-        button_apply();
+        //button_apply();
         break;
     }
 }
 
-void TourDialog::button_apply() {
+void TourDialog::onRec() {
 
     QThread* thread_ = new QThread;
 
@@ -130,24 +135,17 @@ void TourDialog::oneStepAroundY() {
     up_y = cameras[0].view[1];
     up_z = cameras[0].view[2];
 
-    double alpha = 0.01;
+    double alpha = 0.1;
 
     pos_x = cos(alpha)*pos_x + sin(alpha)*pos_y;
     pos_y = -sin(alpha)*pos_x + cos(alpha)*pos_y;
 
-    sleep(0.01);
+    //sleep(0.01);
     viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
                                  view_x, view_y, view_z,
                                  up_x, up_y, up_z);
 
     if (videoWriter_) {
-        static int ii = 0;
-
-        char filename[50];
-        sprintf(filename, "out/%d.png", ii++);
-        cv::Mat frame;
-        frame = cv::imread(filename, CV_LOAD_IMAGE_COLOR);   // Read the file
-
         QRect rect = pclViewer_->getSnapshotGeometry();
         QPixmap pixmap(rect.size());
         pclViewer_->renderASnapshot(pixmap, QPoint(), QRegion(rect));

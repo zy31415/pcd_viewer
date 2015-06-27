@@ -56,6 +56,7 @@ public slots:
 
     void oneStepAroundY();
     void tourFinished();
+    void onRec();
 
 
 signals:
