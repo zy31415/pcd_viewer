@@ -262,15 +262,22 @@ void PCDViewerMainWindow::onIfShowDataPoints(){
 
 void PCDViewerMainWindow::onIfShowMeshes()
 {
-    if (data_->getIfShowMeshes())
-        onDrawMeshes();
-    else
+    if (data_->getIfShowMeshes()) {
         if (viewer_->contains("meshes"))
-            viewer_->removePointCloud("meshes");
+            viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
+        else
+            viewer_->addPolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
+    } else
+        if (viewer_->contains("meshes"))
+            viewer_ -> removePolygonMesh("meshes");
 
 }
 
 void PCDViewerMainWindow::onDrawMeshes()
 {
+    if (viewer_->contains("meshes"))
+        viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
+    else
+        viewer_->addPolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
 
 }
