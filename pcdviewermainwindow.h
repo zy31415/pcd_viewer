@@ -108,8 +108,10 @@ public slots:
     void onDrawPointSize();
     void onDrawMeshes();
 
+    void onSetCamera(std::vector<double>);
+
 private slots:
-    void onSetCamera();
+    void onSetCameraButtonPressed();
 
 };
 

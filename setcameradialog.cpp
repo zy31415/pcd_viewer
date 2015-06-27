@@ -60,6 +60,22 @@ void SetCameraDialog::button_apply()
     up_x = ui->up_x->text().toFloat();
     up_y = ui->up_y->text().toFloat();
     up_z = ui->up_z->text().toFloat();
+
+    std::vector<double> par;
+    par.push_back(pos_x);
+    par.push_back(pos_y);
+    par.push_back(pos_z);
+
+    par.push_back(view_x);
+    par.push_back(view_y);
+    par.push_back(view_z);
+
+    par.push_back(up_x);
+    par.push_back(up_y);
+    par.push_back(up_z);
+
+
+    emit onSetCamera(par);
 }
 
 

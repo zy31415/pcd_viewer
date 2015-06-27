@@ -69,16 +69,13 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
     connect(ui->actionSnapshot, SIGNAL(triggered()), this, SLOT(onSnapshot()));
 
     // set camera position
-    connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCamera()));
+    connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCameraButtonPressed()));
 
     // connect DataModel to PCDViewerMainWindow, data changing signals
     connect(data_, SIGNAL(onDrawCloudData()), this, SLOT(onDrawCloudData()));
     connect(data_, SIGNAL(onDrawPointSize()), this, SLOT(onDrawPointSize()));
     connect(data_, SIGNAL(onIfShowDataPoints()), this, SLOT(onIfShowDataPoints()));
     connect(data_, SIGNAL(onDrawMeshes()), this, SLOT(onDrawMeshes()));
-
-
-
 
 }
 
@@ -196,18 +193,23 @@ void PCDViewerMainWindow::renderASnapshot(QPixmap& pixmap,
     ui->qvtkWidget->render(&pixmap, targetOffset, sourceRegion);
 }
 
-void PCDViewerMainWindow::onSetCamera()
+void PCDViewerMainWindow::onSetCameraButtonPressed()
 {
     std::vector<pcl::visualization::Camera> cameras;
     viewer_ -> getCameras(cameras);
 
     SetCameraDialog dialog(cameras[0], this);
-    dialog.exec();
 
-    viewer_ -> setCameraPosition(dialog.getPosX(), dialog.getPosY(), dialog.getPosZ(),
-                                 dialog.getViewX(), dialog.getViewY(), dialog.getViewZ(),
-                                 dialog.getUpX(), dialog.getUpY(), dialog.getUpZ()
-                                 );
+    connect(&dialog, SIGNAL(onSetCamera(std::vector<double>)), this, SLOT(onSetCamera(std::vector<double>)));
+
+    dialog.exec();
+}
+
+void PCDViewerMainWindow::onSetCamera(std::vector<double> pars)
+{
+    viewer_ -> setCameraPosition(pars[0], pars[1], pars[2],
+                                 pars[3], pars[4], pars[5],
+                                 pars[6], pars[7], pars[8]);
 }
 
 void PCDViewerMainWindow::disableResize()

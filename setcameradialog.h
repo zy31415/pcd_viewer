@@ -52,6 +52,7 @@ public slots:
     void onButton(QAbstractButton *button);
 
 signals:
+    void onSetCamera(std::vector<double> vec);
 
 };
 
