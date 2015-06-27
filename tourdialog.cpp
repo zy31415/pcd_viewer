@@ -130,14 +130,11 @@ void TourDialog::oneStepAroundY() {
     up_y = cameras[0].view[1];
     up_z = cameras[0].view[2];
 
-    pos_y = (bb.get_max_y() + bb.get_min_y())/2.;
+    double alpha = 0.01;
 
-    double r = 4 * sqrt(pow(bb.get_max_x(),2.) + pow(bb.get_max_z(),2.));
+    pos_x = cos(alpha)*pos_x + sin(alpha)*pos_y;
+    pos_y = -sin(alpha)*pos_x + cos(alpha)*pos_y;
 
-    pos_z = r * cos(alpha);
-    pos_x = r * sin(alpha);
-
-    alpha += 0.04;
     sleep(0.01);
     viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
                                  view_x, view_y, view_z,
