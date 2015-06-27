@@ -7,5 +7,7 @@
         <file>resources/Color-icon.png</file>
         <file>resources/Icon-meshes.png</file>
         <file>resources/Snapshot.png</file>
+        <file>resources/stop.png</file>
+        <file>resources/record.png</file>
     </qresource>
 </RCC>

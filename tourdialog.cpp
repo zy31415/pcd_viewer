@@ -26,8 +26,6 @@ TourDialog::TourDialog(QWidget *parent) :
 
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
 
-    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
-    viewer_ = pclViewer_ -> getViewer();
 
     ui->comboBox->addItem("Rotate around Y");
     ui->comboBox->addItem("Rotate around X");
@@ -82,10 +80,6 @@ void TourDialog::button_apply() {
 }
 
 void TourDialog::initRecording() {
-    // disable resize
-    pclViewer_ -> disableResize();
-
-    detectFrameSize();
 
     videoWriter_ = new cv::VideoWriter(
                 "video.avi",                    // filename

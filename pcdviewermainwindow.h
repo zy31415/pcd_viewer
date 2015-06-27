@@ -44,6 +44,8 @@ private:
 
     TourDialog* td_;
 
+    cv::VideoWriter* videoWriter_;
+
     void setUpQVTKWindow(void);
 
     void connect_SIGNAL_SLOT();
@@ -109,6 +111,8 @@ public slots:
     void onDrawMeshes();
 
     void onSetCamera(std::vector<double>);
+
+    void oneStepAroundY();
 
 private slots:
     void onSetCameraButtonPressed();

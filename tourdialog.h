@@ -30,9 +30,6 @@ public:
 private:
     Ui::TourDialog *ui;
 
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_; // display widget
-    PCDViewerMainWindow* pclViewer_; // parent widget
-
     double alpha;
     cv::VideoWriter* videoWriter_;
 
