@@ -22,8 +22,7 @@ SOURCES += main.cpp\
     worker.cpp \
     setcameradialog.cpp \
     datamodel.cpp \
-    pcdviewermainwindow.cpp \
-    myqvtkwidget.cpp
+    pcdviewermainwindow.cpp
 
 HEADERS  += \
     colordialog.h \
@@ -34,8 +33,7 @@ HEADERS  += \
     worker.h \
     setcameradialog.h \
     datamodel.h \
-    pcdviewermainwindow.h \
-    myqvtkwidget.h
+    pcdviewermainwindow.h
 
 FORMS    += \
     colordialog.ui \

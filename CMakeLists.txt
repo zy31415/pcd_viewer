@@ -10,14 +10,14 @@ include_directories (${PCL_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 link_directories    (${PCL_LIBRARY_DIRS})
 add_definitions     (${PCL_DEFINITIONS})
 
-set  (project_SOURCES main.cpp pcdviewermainwindow.cpp myqvtkwidget.cpp colordialog.cpp triangulationdialog.cpp
+set  (project_SOURCES main.cpp pcdviewermainwindow.cpp colordialog.cpp triangulationdialog.cpp
                 triangulation_meshes.cpp tourdialog.cpp boundingbox.cpp	worker.cpp
-                setcameradialog.cpp
+                setcameradialog.cpp datamodel.cpp
         )
 
-set  (project_HEADERS pcdviewermainwindow.h myqvtkwidget.h colordialog.h triangulationdialog.h
+set  (project_HEADERS pcdviewermainwindow.h colordialog.h triangulationdialog.h
                 triangulation_meshes.h setcameradialog.h boundingbox.h worker.h
-                setcameradialog.h tourdialog.h
+                setcameradialog.h tourdialog.h datamodel.h
         )
 
 set  (project_FORMS pcdviewermainwindow.ui colordialog.ui triangulationdialog.ui

@@ -5,7 +5,7 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-
+#include <pcl/filters/filter.h>
 
 DataModel::DataModel(QObject *parent) :
     QObject(parent),
@@ -146,4 +146,16 @@ void DataModel::readPCDFile(QString filename)
     //bb.update(cloud_);
 
     colorPCDAlongAxis ();
+
+    emit updateViewer();
 }
+
+
+void DataModel::computeTriangulationMesh() {
+    compute_triangulation_meshes(
+                cloud_,
+                meshes_,
+                triangulation_parameters
+                );
+}
+

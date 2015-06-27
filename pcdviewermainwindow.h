@@ -7,9 +7,6 @@
 #include <QMessageBox>
 
 // Point Cloud Library
-
-
-#include <pcl/filters/filter.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
 // Boost

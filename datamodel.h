@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "boundingbox.h"
+#include "triangulation_meshes.h"
 
 class DataModel : public QObject
 {
@@ -24,6 +25,8 @@ private:
     /** @brief Points Cloud meshes */
     pcl::PolygonMesh::Ptr meshes_;
 
+    TriangulationParameters triangulation_parameters;
+
     /** @brief Color point cloud on X,Y or Z axis using a Look-Up Table (LUT)
      * Computes a LUT and color the cloud accordingly, available color palettes are :
      *
@@ -38,6 +41,7 @@ private:
      * @note A boost rounding exception error will be thrown if used with a non dense point cloud
      */
     void colorPCDAlongAxis();
+    void genRandomPCDWithinUnitBox();
 
 public:
     explicit DataModel(QObject *parent = 0);
@@ -45,7 +49,13 @@ public:
 
     void readPCDFile(QString filename);
 
+    void computeTriangulationMesh();
+
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr getCloud() {return cloud_;}
+
 signals:
+
+    void updateViewer();
 
 public slots:
 };

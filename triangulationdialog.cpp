@@ -75,13 +75,13 @@ void TriangulationDialog::getParametersFromDialog() {
 
 void TriangulationDialog::computeTriangulationMesh() {
 
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_ = pclViewer_->getPointsData();
+//    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_ = pclViewer_->getPointsData();
 
-    compute_triangulation_meshes(
-                cloud_,
-                meshes_,
-                triangulation_parameters
-                );
+//    compute_triangulation_meshes(
+//                cloud_,
+//                meshes_,
+//                triangulation_parameters
+//                );
 }
 
 void TriangulationDialog::onComputeTriangulationButton(QAbstractButton *button) {
@@ -103,22 +103,22 @@ void TriangulationDialog::onComputeTriangulationButton(QAbstractButton *button) 
 
 
 void TriangulationDialog::button_apply() {
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_ = pclViewer_ -> getPointsData();
+//    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_ = pclViewer_ -> getPointsData();
 
-    if (if_plot_meshes) {
-        getParametersFromDialog();
-        computeTriangulationMesh();
+//    if (if_plot_meshes) {
+//        getParametersFromDialog();
+//        computeTriangulationMesh();
 
-        if (viewer_->contains("polygon"))
-            viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "polygon");
-        else
-            viewer_->addPolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "polygon");
+//        if (viewer_->contains("polygon"))
+//            viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "polygon");
+//        else
+//            viewer_->addPolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "polygon");
 
-    } else
-        if (viewer_->contains("polygon"))
-            viewer_ -> removePolygonMesh("polygon");
+//    } else
+//        if (viewer_->contains("polygon"))
+//            viewer_ -> removePolygonMesh("polygon");
 
-    pclViewer_ -> update();
+//    pclViewer_ -> update();
 
 }
 

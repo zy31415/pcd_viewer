@@ -10,6 +10,9 @@
 
 #include <boost/filesystem.hpp>
 
+#include <pcl/io/ply_io.h>
+#include <pcl/io/pcd_io.h>
+
 PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     QMainWindow (parent),
     ui (new Ui::PCDViewerMainWindow),
@@ -17,8 +20,7 @@ PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     //  viewer_ should be initialized before other dialogs.
     viewer_(new pcl::visualization::PCLVisualizer ("viewer", false)),
     triangulationDialog_(new TriangulationDialog(this)),
-    td_(new TourDialog(this)),
-    cloud_ (new pcl::PointCloud<pcl::PointXYZRGBA>)
+    td_(new TourDialog(this))
 {
     ui->setupUi (this);
 
@@ -36,12 +38,10 @@ PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     // Set up the QVTK window
     setUpQVTKWindow();
 
-
     connect_SIGNAL_SLOT();
 
-
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
-    viewer_->addPointCloud(cloud_, rgb, "cloud");
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(data_->getCloud());
+    viewer_->addPointCloud(data_->getCloud(), rgb, "cloud");
     viewer_->resetCamera();
     ui->qvtkWidget->update();
 
@@ -81,10 +81,12 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
 
     connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCamera()));
 
+    connect(data_, SIGNAL(updateViewer()), this, SLOT(updateViewer()));
 
 }
 
-void PCDViewerMainWindow::setUpQVTKWindow() {
+void PCDViewerMainWindow::setUpQVTKWindow()
+{
     viewer_->setBackgroundColor (0.2, 0.2, 0.2);
     ui->qvtkWidget->SetRenderWindow (viewer_->getRenderWindow ());
     viewer_->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
@@ -99,54 +101,26 @@ void PCDViewerMainWindow::loadFileButtonPressed ()
                 ".",
                 tr ("Point cloud data (*.pcd *.ply)"));
 
-    PCL_INFO("File chosen: %s\n", filename.toStdString ().c_str());
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_tmp (new pcl::PointCloud<pcl::PointXYZRGBA>);
+    data_->readPCDFile(filename);
 
-    if (filename.isEmpty ())
-        return;
+//    // clear screen:
+//    viewer_->removeAllShapes();
+//    viewer_->removeAllPointClouds();
 
-    int return_status;
-    if (filename.endsWith (".pcd", Qt::CaseInsensitive))
-        return_status = pcl::io::loadPCDFile (filename.toStdString (), *cloud_tmp);
-    else
-        return_status = pcl::io::loadPLYFile (filename.toStdString (), *cloud_tmp);
+//    // add new point could
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
+//    viewer_->addPointCloud (cloud_, rgb, "cloud");
+//    viewer_->resetCamera ();
+//    ui->qvtkWidget->update ();
 
-    if (return_status != 0) {
-        PCL_ERROR("Error reading point cloud %s\n", filename.toStdString ().c_str ());
-        return;
-    }
+//    // Update widgests:
+//    triangulationDialog_->close();
+//    delete triangulationDialog_;
+//    triangulationDialog_ = new TriangulationDialog(this);
 
-    // If point cloud contains NaN values, remove them before updating the visualizer point cloud
-    if (cloud_tmp->is_dense)
-        pcl::copyPointCloud (*cloud_tmp, *cloud_);
-    else {
-        PCL_WARN("Cloud is not dense! Non finite points will be removed\n");
-        std::vector<int> vec;
-        pcl::removeNaNFromPointCloud (*cloud_tmp, *cloud_, vec);
-    }
-
-    //bb.update(cloud_);
-
-    colorCloudDistances ();
-
-    // clear screen:
-    viewer_->removeAllShapes();
-    viewer_->removeAllPointClouds();
-
-    // add new point could
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
-    viewer_->addPointCloud (cloud_, rgb, "cloud");
-    viewer_->resetCamera ();
-    ui->qvtkWidget->update ();
-
-    // Update widgests:
-    triangulationDialog_->close();
-    delete triangulationDialog_;
-    triangulationDialog_ = new TriangulationDialog(this);
-
-    cdialog_->close();
-    delete cdialog_;
-    cdialog_ = new ColorDialog(this);
+//    cdialog_->close();
+//    delete cdialog_;
+//    cdialog_ = new ColorDialog(this);
 
 }
 
@@ -163,13 +137,13 @@ void PCDViewerMainWindow::saveFileButtonPressed ()
 
   int return_status;
   if (filename.endsWith (".pcd", Qt::CaseInsensitive))
-    return_status = pcl::io::savePCDFileBinary (filename.toStdString (), *cloud_);
+    return_status = pcl::io::savePCDFileBinary (filename.toStdString (), *data_->getCloud());
   else if (filename.endsWith (".thisply", Qt::CaseInsensitive))
-    return_status = pcl::io::savePLYFileBinary (filename.toStdString (), *cloud_);
+    return_status = pcl::io::savePLYFileBinary (filename.toStdString (), *data_->getCloud());
   else
   {
     filename.append(".ply");
-    return_status = pcl::io::savePLYFileBinary (filename.toStdString (), *cloud_);
+    return_status = pcl::io::savePLYFileBinary (filename.toStdString (), *data_->getCloud());
   }
 
   if (return_status != 0)
@@ -180,20 +154,20 @@ void PCDViewerMainWindow::saveFileButtonPressed ()
 }
 
 void PCDViewerMainWindow::axisChosen() {
-    filtering_axis_= cdialog_ -> get_color_changing_axis();
-    updatePointCloud();
+//    filtering_axis_= cdialog_ -> get_color_changing_axis();
+//    updatePointCloud();
 }
 
 void PCDViewerMainWindow::lookUpTableChosen() {
-    color_mode_ = cdialog_ -> get_look_up_table();
-    updatePointCloud();
+//    color_mode_ = cdialog_ -> get_look_up_table();
+//    updatePointCloud();
 }
 
 void PCDViewerMainWindow::updatePointCloud() {
-    colorCloudDistances ();
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
-    viewer_->updatePointCloud (cloud_, rgb, "cloud");
-    ui->qvtkWidget->update ();
+//    colorCloudDistances ();
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
+//    viewer_->updatePointCloud (cloud_, rgb, "cloud");
+//    ui->qvtkWidget->update ();
 }
 
 
@@ -216,9 +190,9 @@ void PCDViewerMainWindow::removePointsCloudFromView() {
 }
 
 void PCDViewerMainWindow::addPointsCloudToView() {
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
-    viewer_->addPointCloud(cloud_, rgb, "cloud");
-    ui->qvtkWidget->update();
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
+//    viewer_->addPointCloud(cloud_, rgb, "cloud");
+//    ui->qvtkWidget->update();
 }
 
 void PCDViewerMainWindow::onTriangulation(){
@@ -265,7 +239,7 @@ const QRect& PCDViewerMainWindow::getSnapshotGeometry() {
 void PCDViewerMainWindow::renderASnapshot(QPixmap& pixmap,
             const QPoint & targetOffset,
             const QRegion & sourceRegion) {
-    ui->qvtkWidget->render(&updateViewerpixmap, targetOffset, sourceRegion);
+//    ui->qvtkWidget->render(&updateViewerpixmap, targetOffset, sourceRegion);
 }
 
 void PCDViewerMainWindow::onSetCamera() {
@@ -284,5 +258,25 @@ void PCDViewerMainWindow::enableResize() {
 }
 
 void PCDViewerMainWindow::updateViewer() {
+    // clear screen:
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(data_->getCloud());
+
+    if (viewer_->contains("cloud"))
+        viewer_->updatePointCloud (data_->getCloud(), rgb, "cloud");
+    else
+        viewer_->addPointCloud (data_->getCloud(), rgb, "cloud");
+
+    viewer_->resetCamera ();
+    ui->qvtkWidget->update ();
+
+
+    // Update widgests:
+//    triangulationDialog_->close();
+//    delete triangulationDialog_;
+//    triangulationDialog_ = new TriangulationDialog(this);
+
+//    cdialog_->close();
+//    delete cdialog_;
+//    cdialog_ = new ColorDialog(this);
 
 }
