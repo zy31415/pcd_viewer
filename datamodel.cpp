@@ -14,7 +14,8 @@ DataModel::DataModel(QObject *parent) :
     color_mode_(4), // = Rainbow
     point_size(3),
     if_show_data_points(true),
-    if_show_meshes(false)
+    if_show_meshes(false),
+    meshes_(new pcl::PolygonMesh)
 {
     genRandomPCDWithinUnitBox();
 }
@@ -230,10 +231,11 @@ void DataModel::setMeshing(bool if_show_meshes,
                            const TriangulationParameters& par)
 {
     this->if_show_meshes = if_show_meshes;
-    if (if_show_meshes) {
+    if (if_show_meshes)
+    {
+        triangulation_parameters = par;
         computeTriangulationMesh();
-        emit onIfShowMeshes();
     }
 
-
+    emit onDrawMeshes();
 }

@@ -8,7 +8,7 @@
 #include "triangulation_meshes.h"
 
 
-TriangulationDialog::TriangulationDialog(DataModel data_, QWidget *parent) :
+TriangulationDialog::TriangulationDialog(DataModel* data_, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TriangulationDialog),
     data_(data_)
@@ -17,13 +17,8 @@ TriangulationDialog::TriangulationDialog(DataModel data_, QWidget *parent) :
 
     setParametersToDialog();
 
-    meshes_.reset(new pcl::PolygonMesh);
-
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onComputeTriangulationButton(QAbstractButton*)));
     connect(ui->checkBox_if_plot_meshes, SIGNAL(toggled(bool)), this, SLOT(setEnabled()));
-
-    pclViewer_ = (PCDViewerMainWindow*)parentWidget();
-    viewer_ = pclViewer_ -> getViewer();
 }
 
 TriangulationDialog::~TriangulationDialog()
@@ -33,7 +28,7 @@ TriangulationDialog::~TriangulationDialog()
 
 void TriangulationDialog::setParametersToDialog()
 {
-    TriangulationParameters par = data_->getTriangulationParameter();
+    TriangulationParameters par(data_->getTriangulationParameters());
     ui->lineEdit_k->setText(QString::number(par.k));
     ui->lineEdit_SearchRadius->setText(QString::number(par.search_radius));
     ui->lineEdit_Mu->setText(QString::number(par.mu));
@@ -43,7 +38,7 @@ void TriangulationDialog::setParametersToDialog()
     ui->lineEdit_MaximumAngle->setText(QString::number(par.max_angle*180./PI));
     ui->checkBox_is_normal_consistency->setChecked(par.is_normal_consistency);
 
-    ui->checkBox_if_plot_meshes->setChecked(data_->get);
+    ui->checkBox_if_plot_meshes->setChecked(data_->getIfShowMeshes());
 
     setEnabled();
 }

@@ -89,12 +89,6 @@ public slots:
     /** @brief Triggered whenever the "Load file" button is clicked */
     void onLoadFileButton ();
 
-    /** @brief Triggered whenever a button in the "Color on axis" group is clicked */
-    void axisChosen ();
-
-    /** @brief Triggered whenever a button in the "Color mode" group is clicked */
-    void lookUpTableChosen ();
-
     /** @brief About the program.*/
     void onAbout();
 
@@ -108,9 +102,11 @@ public slots:
 
     void onSnapshot();
 
+    void onIfShowDataPoints();
+
     void onDrawCloudData();
     void onDrawPointSize();
-    void onIfShowDataPoints();
+    void onDrawMeshes();
 
 private slots:
     void onSetCamera();

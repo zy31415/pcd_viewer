@@ -14,10 +14,7 @@
 PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     QMainWindow (parent),
     ui (new Ui::PCDViewerMainWindow),
-    // Note: the order of initialization is very important.
-    //  viewer_ should be initialized before other dialogs.
     viewer_(new pcl::visualization::PCLVisualizer ("viewer", false)),
-    triangulationDialog_(new TriangulationDialog(this)),
     td_(new TourDialog(this))
 {
     ui->setupUi (this);
@@ -73,12 +70,11 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
 
     connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCamera()));
 
-
     // connect DataModel to PCDViewerMainWindow, data changing signals
     connect(data_, SIGNAL(onDrawCloudData()), this, SLOT(onDrawCloudData()));
     connect(data_, SIGNAL(onDrawPointSize()), this, SLOT(onDrawPointSize()));
     connect(data_, SIGNAL(onIfShowDataPoints()), this, SLOT(onIfShowDataPoints()));
-    connect(data_, SIGNAL(onIfShowMeshes()), this, SLOT(onIfShowMeshes()));
+    connect(data_, SIGNAL(onDrawMeshes()), this, SLOT(onDrawMeshes()));
 
 
 }
@@ -159,7 +155,7 @@ void PCDViewerMainWindow::addPointsCloudToView() {
 }
 
 void PCDViewerMainWindow::onTriangulation(){
-    TriangulationDialog tridia(data_);
+    TriangulationDialog tridia(data_, this);
     tridia.exec();
 }
 
@@ -260,24 +256,22 @@ void PCDViewerMainWindow::onIfShowDataPoints(){
     ui->qvtkWidget->update();
 }
 
-void PCDViewerMainWindow::onIfShowMeshes()
+void PCDViewerMainWindow::onDrawMeshes()
 {
     if (data_->getIfShowMeshes()) {
         if (viewer_->contains("meshes"))
-            viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
+            viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(
+                        data_->getCloud(),
+                        data_->getMesh()->polygons,
+                        "meshes");
         else
-            viewer_->addPolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
+            viewer_->addPolygonMesh<pcl::PointXYZRGBA>(
+                        data_->getCloud(),
+                        data_->getMesh()->polygons,
+                        "meshes");
     } else
         if (viewer_->contains("meshes"))
             viewer_ -> removePolygonMesh("meshes");
 
-}
-
-void PCDViewerMainWindow::onDrawMeshes()
-{
-    if (viewer_->contains("meshes"))
-        viewer_->updatePolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
-    else
-        viewer_->addPolygonMesh<pcl::PointXYZRGBA>(cloud_, meshes_->polygons, "meshes");
-
+    ui->qvtkWidget->update();
 }

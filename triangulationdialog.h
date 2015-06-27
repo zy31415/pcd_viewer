@@ -24,11 +24,12 @@ class TriangulationDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TriangulationDialog(DataModel data_, QWidget *parent = 0);
+    explicit TriangulationDialog(DataModel* data_, QWidget *parent = 0);
     ~TriangulationDialog();
 
 private:
     Ui::TriangulationDialog *ui;
+    DataModel* data_;
 
     void setParametersToDialog();
     TriangulationParameters getTriangulationParametersFromDialog();

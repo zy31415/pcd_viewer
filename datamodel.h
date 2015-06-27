@@ -76,12 +76,13 @@ public:
     bool getIfShowMeshes() {return if_show_meshes;}
     void setMeshing(bool if_show_meshes,
                     const TriangulationParameters& par);
+    pcl::PolygonMesh::Ptr getMesh() {return meshes_;}
 
 signals:
     void onDrawCloudData();
     void onDrawPointSize();
     void onIfShowDataPoints();
-    void onIfShowMeshes();
+    void onDrawMeshes();
 
 public slots:
 };

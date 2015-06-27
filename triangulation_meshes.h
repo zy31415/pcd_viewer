@@ -30,7 +30,7 @@ struct TriangulationParameters {
         is_normal_consistency(true)
     {}
 
-    TriangulationParameters(TriangulationParameters& other) {
+    TriangulationParameters(const TriangulationParameters& other) {
         k = other.k;
         search_radius = other.search_radius;
         mu = other.mu;
