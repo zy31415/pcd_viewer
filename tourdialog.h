@@ -54,6 +54,7 @@ private:
     int getTourStyleSelection();
 
     void initRecording();
+    void recordOneFrame();
 
     void detectFrameSize();
 
@@ -67,6 +68,8 @@ public slots:
     void errorString(QString str) { std::cout<<str.toStdString()<<std::endl;}
 
     void oneStepAroundY();
+    void oneStepAroundX();
+    void oneStepAroundZ();
     void tourFinished();
     void onRec();
     void onStop();

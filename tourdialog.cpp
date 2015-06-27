@@ -85,8 +85,18 @@ void TourDialog::onRec() {
     connect(worker_, SIGNAL(finished()), this, SLOT(tourFinished()));
     connect(thread_, SIGNAL(finished()), thread_, SLOT(deleteLater()));
 
-    if (getTourStyleSelection() == 0)
+    switch (getTourStyleSelection()) {
+    case 0:
         connect(worker_, SIGNAL(moveOneStep()), this, SLOT(oneStepAroundY()));
+        break;
+    case 1:
+        connect(worker_, SIGNAL(moveOneStep()), this, SLOT(oneStepAroundX()));
+        break;
+    default:
+        connect(worker_, SIGNAL(moveOneStep()), this, SLOT(oneStepAroundZ()));
+        break;
+    }
+
 
     if (ui->checkBox->isChecked())
         initRecording();
@@ -175,25 +185,113 @@ void TourDialog::oneStepAroundY() {
                                  view_x, view_y, view_z,
                                  up_x, up_y, up_z);
 
-    if (videoWriter_) {
-        QRect rect = pclViewer_->getSnapshotGeometry();
-        QPixmap pixmap(rect.size());
-        pclViewer_->renderASnapshot(pixmap, QPoint(), QRegion(rect));
+    if (videoWriter_)
+        recordOneFrame();
+}
 
-        char buffer[50];
+void TourDialog::oneStepAroundX() {
+    double pos_x, pos_y, pos_z,
+            view_x, view_y, view_z,
+            up_x, up_y, up_z;
 
-        tmpnam(buffer);
 
-        pixmap.save(buffer, "PNG", image_quality);
+    std::vector<pcl::visualization::Camera> cameras;
+    viewer_ -> getCameras(cameras);
 
-        cv::Mat frame;
-        frame = cv::imread(buffer, CV_LOAD_IMAGE_COLOR);   // Read the file
+    BoundingBox bb = pclViewer_->getData()->getBoundingBox();
 
-        assert(frame.size().width == frame_width);
-        assert(frame.size().height == frame_height);
+    double mid_y = bb.get_mid(1)/2.;
+    double mid_z = bb.get_mid(2)/2.;
 
-        videoWriter_->write(frame);
-    }
+
+    pos_x = cameras[0].pos[0];
+    pos_y = cameras[0].pos[1];
+    pos_z = cameras[0].pos[2];
+
+    view_x = cameras[0].focal[0];
+    view_y = cameras[0].focal[1];
+    view_z = cameras[0].focal[2];
+
+    up_x = cameras[0].view[0];
+    up_y = cameras[0].view[1];
+    up_z = cameras[0].view[2];
+
+    double alpha = 0.1;
+
+    pos_y = cos(alpha)*(pos_y - mid_y) + sin(alpha)*(pos_z - mid_z) + mid_y;
+    pos_z = -sin(alpha)*(pos_y - mid_y) + cos(alpha)*(pos_z - mid_z) + mid_z;
+
+    //sleep(0.01);
+    viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
+                                 view_x, view_y, view_z,
+                                 up_x, up_y, up_z);
+
+    if (videoWriter_)
+        recordOneFrame();
+}
+
+void TourDialog::oneStepAroundZ() {
+    double pos_x, pos_y, pos_z,
+            view_x, view_y, view_z,
+            up_x, up_y, up_z;
+
+
+    std::vector<pcl::visualization::Camera> cameras;
+    viewer_ -> getCameras(cameras);
+
+    BoundingBox bb = pclViewer_->getData()->getBoundingBox();
+
+    double mid_x = bb.get_mid(0)/2.;
+    double mid_y = bb.get_mid(1)/2.;
+
+
+    pos_x = cameras[0].pos[0];
+    pos_y = cameras[0].pos[1];
+    pos_z = cameras[0].pos[2];
+
+    view_x = cameras[0].focal[0];
+    view_y = cameras[0].focal[1];
+    view_z = cameras[0].focal[2];
+
+    up_x = cameras[0].view[0];
+    up_y = cameras[0].view[1];
+    up_z = cameras[0].view[2];
+
+    double alpha = 0.1;
+
+    pos_x = cos(alpha)*(pos_x - mid_x) + sin(alpha)*(pos_y - mid_y) + mid_x;
+    pos_y = -sin(alpha)*(pos_x - mid_x) + cos(alpha)*(pos_y - mid_y) + mid_y;
+
+    //sleep(0.01);
+    viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
+                                 view_x, view_y, view_z,
+                                 up_x, up_y, up_z);
+
+    if (videoWriter_)
+        recordOneFrame();
+}
+
+void TourDialog::recordOneFrame()
+{
+
+    QRect rect = pclViewer_->getSnapshotGeometry();
+    QPixmap pixmap(rect.size());
+    pclViewer_->renderASnapshot(pixmap, QPoint(), QRegion(rect));
+
+    char buffer[50];
+
+    tmpnam(buffer);
+
+    pixmap.save(buffer, "PNG", image_quality);
+
+    cv::Mat frame;
+    frame = cv::imread(buffer, CV_LOAD_IMAGE_COLOR);   // Read the file
+
+    assert(frame.size().width == frame_width);
+    assert(frame.size().height == frame_height);
+
+    videoWriter_->write(frame);
+
 }
 
 
