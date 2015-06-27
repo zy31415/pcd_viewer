@@ -159,6 +159,12 @@
    <property name="text">
     <string>&amp;Color Mode ...</string>
    </property>
+   <property name="toolTip">
+    <string>Color Mode (Ctrl+C)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="action_Triangulation">
    <property name="icon">
@@ -169,15 +175,24 @@
     <string>&amp;Meshes</string>
    </property>
    <property name="toolTip">
-    <string>Add meshes to the plot.</string>
+    <string>Add meshes to the plot (Ctrl+M)</string>
    </property>
    <property name="statusTip">
     <string>Click to configure and add.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionTour">
    <property name="text">
     <string>Tour ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Tour(Ctrl+T)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionSet_Camera">
@@ -193,8 +208,14 @@
    <property name="text">
     <string>Snapshot</string>
    </property>
+   <property name="toolTip">
+    <string>Snapshot (Alt+S)</string>
+   </property>
    <property name="statusTip">
     <string>Click to take a snapshot of the plot.</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+S</string>
    </property>
   </action>
  </widget>
