@@ -39,6 +39,8 @@ public:
     double get_max(int axis);
     double get_min(int axis);
 
+    double get_mid(int axis);
+
     void update(const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_);
 
 };

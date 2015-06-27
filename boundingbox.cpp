@@ -56,3 +56,7 @@ double BoundingBox::get_min(int axis){
         return min_z;
     }
 }
+
+double BoundingBox::get_mid(int axis){
+    return (get_max(axis) + get_min(axis))/2.;
+}

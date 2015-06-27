@@ -2,6 +2,7 @@
 #define WORKER_H
 
 #include <QObject>
+#include <QReadWriteLock>
 
 // pcl
 #include <pcl/visualization/pcl_visualizer.h>
@@ -11,8 +12,17 @@
 class Worker : public QObject
 {
     Q_OBJECT
+
+private:
+    int* num_worker_;
+    QReadWriteLock* locker_;
+
 public:
-    explicit Worker(QObject *parent = 0) {}
+    explicit Worker(
+            int* num_worker_,
+            QReadWriteLock* locker_,
+            QObject *parent = 0): num_worker_(num_worker_), locker_(locker_) {}
+
     ~Worker(){}
 
 signals:

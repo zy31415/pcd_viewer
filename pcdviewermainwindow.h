@@ -24,6 +24,8 @@
 // typedef pcl::PointXYZRGBA PointT;
 // typedef pcl::PointCloud<pcl::PointXYZRGBA> PointCloudT;
 
+class DataModel;
+
 namespace Ui {
   class PCDViewerMainWindow;
 }
@@ -66,6 +68,8 @@ public:
     inline boost::shared_ptr<pcl::visualization::PCLVisualizer> getViewer() {
         return viewer_;
     }
+
+    DataModel* getData() {return data_;}
 
 
     void renderASnapshot(QPixmap& pixmap,

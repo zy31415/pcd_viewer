@@ -7,11 +7,13 @@
 // QT
 #include <QDialog>
 #include <QAbstractButton>
+#include <QReadWriteLock>
 
 // opencv
 #include <opencv2/opencv.hpp>
 
 // This project
+#include "worker.h"
 
 class PCDViewerMainWindow;
 
@@ -39,6 +41,12 @@ private:
     int frame_width, frame_height, image_quality;
 
 
+    QThread* thread_;
+    Worker* worker_;
+
+    int  num_worker;
+    QReadWriteLock locker;
+
     void button_apply();
     void button_cancel() {}
     void button_ok() {}
@@ -49,6 +57,7 @@ private:
 
     void detectFrameSize();
 
+
 public slots:
     void onButton(QAbstractButton *button);
 
@@ -57,11 +66,12 @@ public slots:
     void oneStepAroundY();
     void tourFinished();
     void onRec();
+    void onStop();
 
 
 signals:
     void click_apply();
-    void finished();
+    void terminate();
     void error(QString err);
 };
 

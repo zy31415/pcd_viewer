@@ -78,6 +78,8 @@ public:
                     const TriangulationParameters& par);
     pcl::PolygonMesh::Ptr getMesh() {return meshes_;}
 
+    BoundingBox getBoundingBox() {return bb;}
+
 signals:
     void onDrawCloudData();
     void onDrawPointSize();

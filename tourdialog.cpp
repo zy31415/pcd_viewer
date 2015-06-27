@@ -10,7 +10,6 @@
 
 #include <qtconcurrentrun.h>
 
-#include "worker.h"
 #include "boundingbox.h"
 #include "pcdviewermainwindow.h"
 
@@ -21,7 +20,10 @@ TourDialog::TourDialog(QWidget *parent) :
     videoWriter_(0),
     frame_width(0),
     frame_height(0),
-    image_quality(100)
+    image_quality(-1),
+    thread_(0),
+    worker_(0),
+    num_worker(0)
 {
     ui->setupUi(this);
 
@@ -30,6 +32,7 @@ TourDialog::TourDialog(QWidget *parent) :
 
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
     connect(ui->pushButtonRec, SIGNAL(clicked()), this, SLOT(onRec()));
+    connect(ui->pushButtonStop, SIGNAL(clicked()), this, SLOT(onStop()));
 
 
     ui->comboBox->addItem("Rotate around Y");
@@ -61,10 +64,17 @@ void TourDialog::onButton(QAbstractButton *button) {
 }
 
 void TourDialog::onRec() {
+    int _num_worker = 0;
 
-    QThread* thread_ = new QThread;
+    locker.lockForRead();
+    _num_worker = num_worker;
+    locker.unlock();
 
-    Worker* worker_ = new Worker(this);
+    if (_num_worker >= 1)
+        return;
+
+    thread_ = new QThread;
+    worker_ = new Worker(&num_worker, &locker, this);
 
     worker_->moveToThread(thread_);
 
@@ -81,7 +91,18 @@ void TourDialog::onRec() {
     if (ui->checkBox->isChecked())
         initRecording();
 
+    locker.lockForWrite();
+    num_worker++;
+    locker.unlock();
+
     thread_->start();
+}
+
+void TourDialog::onStop()
+{
+    locker.lockForWrite();
+    num_worker --;
+    locker.unlock();
 }
 
 void TourDialog::initRecording() {
@@ -122,6 +143,11 @@ void TourDialog::oneStepAroundY() {
     std::vector<pcl::visualization::Camera> cameras;
     viewer_ -> getCameras(cameras);
 
+    BoundingBox bb = pclViewer_->getData()->getBoundingBox();
+
+    double mid_x = bb.get_mid(0)/2.;
+    double mid_z = bb.get_mid(2)/2.;
+
 
     pos_x = cameras[0].pos[0];
     pos_y = cameras[0].pos[1];
@@ -137,8 +163,8 @@ void TourDialog::oneStepAroundY() {
 
     double alpha = 0.1;
 
-    pos_x = cos(alpha)*pos_x + sin(alpha)*pos_y;
-    pos_y = -sin(alpha)*pos_x + cos(alpha)*pos_y;
+    pos_x = cos(alpha)*(pos_x - mid_x) + sin(alpha)*(pos_z - mid_z) + mid_x;
+    pos_z = -sin(alpha)*(pos_x - mid_x) + cos(alpha)*(pos_z - mid_z) + mid_z;
 
     //sleep(0.01);
     viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
@@ -159,9 +185,8 @@ void TourDialog::oneStepAroundY() {
         cv::Mat frame;
         frame = cv::imread(buffer, CV_LOAD_IMAGE_COLOR);   // Read the file
 
-
-        assert(frame.size().width == frame_width);
-        assert(frame.size().height == frame_height);
+        //assert(frame.size().width == frame_width);
+        //assert(frame.size().height == frame_height);
 
         videoWriter_->write(frame);
     }
