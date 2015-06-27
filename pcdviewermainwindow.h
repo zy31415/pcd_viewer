@@ -59,11 +59,6 @@ public:
     /** @brief Destructor */
     ~PCDViewerMainWindow ();
 
-    void removePointsCloudFromView();
-    void addPointsCloudToView();
-    void addMeshes();
-    void update();
-
 
     inline boost::shared_ptr<pcl::visualization::PCLVisualizer> getViewer() {
         return viewer_;
@@ -83,10 +78,6 @@ public:
 
     void enableResize();
 
-
-protected:
-
-    void updatePointCloud();
 
 public slots:
     /** @brief Triggered whenever the "Save file" button is clicked */

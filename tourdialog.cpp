@@ -33,11 +33,16 @@ TourDialog::TourDialog(QWidget *parent) :
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
     connect(ui->pushButtonRec, SIGNAL(clicked()), this, SLOT(onRec()));
     connect(ui->pushButtonStop, SIGNAL(clicked()), this, SLOT(onStop()));
+    connect(ui->pushButtonChoosePath, SIGNAL(clicked()), this, SLOT(onChooseFileButton()));
 
 
     ui->comboBox->addItem("Rotate around Y");
     ui->comboBox->addItem("Rotate around X");
     ui->comboBox->addItem("Rotate around Z");
+
+    filename = "clip.avi";
+
+    ui->lineEdit->setText(filename);
 
 }
 
@@ -121,7 +126,7 @@ void TourDialog::initRecording()
     detectFrameSize();
 
     videoWriter_ = new cv::VideoWriter(
-                "video.avi",                    // filename
+                filename.toStdString().c_str(),                    // filename
                 CV_FOURCC('D','I','V','X'),     // fourcc, http://www.fourcc.org/codecs.php
                 10,                             // fps
                 cv::Size(frame_width, frame_height), // frameSize
@@ -300,7 +305,7 @@ int TourDialog::getTourStyleSelection() {
 }
 
 void TourDialog::tourFinished() {
-    videoWriter_->release();
+    //videoWriter_->release();
     delete videoWriter_;
     videoWriter_ = 0;
     unlockWindowFrameSize();
@@ -314,4 +319,14 @@ void TourDialog::lockWindowFrameSize() {
 void TourDialog::unlockWindowFrameSize() {
     pclViewer_->setMaximumSize(QSize(500000,500000));
     pclViewer_->setMinimumSize(QSize(50,50));
+}
+
+void TourDialog::onChooseFileButton(){
+    QFileDialog fdialog(this);
+    QString filter = "Videos (*.avi;;All files (*.*)";
+    filename = fdialog.getSaveFileName(
+                this, tr ("Save video"), "clip.avi",
+                filter, &filter);
+    ui->lineEdit->setText(filename);
+
 }

@@ -32,10 +32,12 @@ PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
 
     connect_SIGNAL_SLOT();
 
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(data_->getCloud());
-    viewer_->addPointCloud(data_->getCloud(), rgb, "cloud");
-    viewer_->resetCamera();
-    ui->qvtkWidget->update();
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(data_->getCloud());
+//    viewer_->addPointCloud(data_->getCloud(), rgb, "cloud");
+//    viewer_->resetCamera();
+//    ui->qvtkWidget->update();
+
+    onDrawCloudData();
 }
 
 PCDViewerMainWindow::~PCDViewerMainWindow ()
@@ -110,18 +112,9 @@ void PCDViewerMainWindow::onSaveFileButton ()
     data_->savePCDFile(filename);
 }
 
-void PCDViewerMainWindow::updatePointCloud() {
-//    colorCloudDistances ();
-//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
-//    viewer_->updatePointCloud (cloud_, rgb, "cloud");
-//    ui->qvtkWidget->update ();
-}
-
-
-
 void PCDViewerMainWindow::onAbout() {
     QMessageBox msgBox(this);
-    msgBox.setText("This is a poit cloud file GUI viewer.<br>"
+    msgBox.setText("This is a point cloud file GUI viewer.<br>"
                    "<b>Author</b>: Yang Zhang <br>"
                    "<b>Email</b>: <a href='mailto:zy31415@gmail.com?Subject=About point cloud viewer' target='_top'>zy31415@gmail.com</a><br>");
     msgBox.exec();
@@ -132,24 +125,10 @@ void PCDViewerMainWindow::onColorMode() {
     cdialog.exec();
 }
 
-void PCDViewerMainWindow::removePointsCloudFromView() {
-    viewer_->removePointCloud("cloud");
-    ui->qvtkWidget->update();
-}
-
-void PCDViewerMainWindow::addPointsCloudToView() {
-//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(cloud_);
-//    viewer_->addPointCloud(cloud_, rgb, "cloud");
-//    ui->qvtkWidget->update();
-}
 
 void PCDViewerMainWindow::onTriangulation(){
     TriangulationDialog tridia(data_, this);
     tridia.exec();
-}
-
-void PCDViewerMainWindow::update() {
-    ui->qvtkWidget->update();
 }
 
 

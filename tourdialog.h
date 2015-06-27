@@ -47,6 +47,8 @@ private:
     int  num_worker;
     QReadWriteLock locker;
 
+    QString filename;
+
     void button_apply();
     void button_cancel() {}
     void button_ok() {}
@@ -73,6 +75,9 @@ public slots:
     void tourFinished();
     void onRec();
     void onStop();
+
+    void onChooseFileButton();
+
 
 
 signals:
