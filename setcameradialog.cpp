@@ -67,9 +67,20 @@ void SetCameraDialog::button_apply() {
     up_y = ui->up_y->text().toFloat();
     up_z = ui->up_z->text().toFloat();
 
-    viewer_ -> setCameraPosition(pos_x, pos_y, pos_z,
-                                 view_x, view_y, view_z,
-                                 up_x, up_y, up_z);
+    pcl::visualization::Camera camera;
+    camera.pos[0] = pos_x;
+    camera.pos[1] = pos_y;
+    camera.pos[2] = pos_z;
+
+    camera.view[0] = up_x;
+    camera.view[1] = up_y;
+    camera.view[2] = up_z;
+
+    camera.focal[0] = view_x;
+    camera.focal[1] = view_y;
+    camera.focal[2] = view_z;
+
+    emit setCameraPosition(camera);
 
 }
 

@@ -68,6 +68,7 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
 
     connect(ui->actionSnapshot, SIGNAL(triggered()), this, SLOT(onSnapshot()));
 
+    // Set camera:
     connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCamera()));
 
     // connect DataModel to PCDViewerMainWindow, data changing signals
@@ -75,6 +76,8 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
     connect(data_, SIGNAL(onDrawPointSize()), this, SLOT(onDrawPointSize()));
     connect(data_, SIGNAL(onIfShowDataPoints()), this, SLOT(onIfShowDataPoints()));
     connect(data_, SIGNAL(onDrawMeshes()), this, SLOT(onDrawMeshes()));
+
+
 
 
 }
@@ -108,17 +111,6 @@ void PCDViewerMainWindow::onSaveFileButton ()
               tr ("Point cloud data (*.pcd *.ply)"));
 
     data_->savePCDFile(filename);
-}
-
-
-void PCDViewerMainWindow::axisChosen() {
-//    filtering_axis_= cdialog_ -> get_color_changing_axis();
-//    updatePointCloud();
-}
-
-void PCDViewerMainWindow::lookUpTableChosen() {
-//    color_mode_ = cdialog_ -> get_look_up_table();
-//    updatePointCloud();
 }
 
 void PCDViewerMainWindow::updatePointCloud() {
@@ -192,22 +184,27 @@ void PCDViewerMainWindow::onSnapshot(){
 
 }
 
-const QRect& PCDViewerMainWindow::getSnapshotGeometry() {
+const QRect& PCDViewerMainWindow::getSnapshotGeometry()
+{
     return ui->qvtkWidget->geometry();
 }
 
 void PCDViewerMainWindow::renderASnapshot(QPixmap& pixmap,
             const QPoint & targetOffset,
-            const QRegion & sourceRegion) {
-//    ui->qvtkWidget->render(&updateViewerpixmap, targetOffset, sourceRegion);
+            const QRegion & sourceRegion)
+{
+    ui->qvtkWidget->render(&pixmap, targetOffset, sourceRegion);
 }
 
-void PCDViewerMainWindow::onSetCamera() {
-    SetCameraDialog dialog(this);
+void PCDViewerMainWindow::onSetCamera()
+{
+    SetCameraDialog dialog(this);    
     dialog.exec();
+    dialog.camera
 }
 
-void PCDViewerMainWindow::disableResize() {
+void PCDViewerMainWindow::disableResize()
+{
     this->setFixedSize(this->size());
 }
 

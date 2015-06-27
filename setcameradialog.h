@@ -3,7 +3,7 @@
 
 // pcl
 #include <pcl/visualization/pcl_visualizer.h>
-
+#include <pcl/visualization/common/common.h>
 // QT
 #include <QDialog>
 #include <QAbstractButton>
@@ -32,6 +32,10 @@ private:
 
 public slots:
     void onButton(QAbstractButton *button);
+
+signals:
+    void setCameraPosition(const pcl::visualization::Camera camera);
+
 };
 
 #endif // TOURDIALOG_H
