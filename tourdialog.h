@@ -57,6 +57,9 @@ private:
 
     void detectFrameSize();
 
+    void lockWindowFrameSize();
+    void unlockWindowFrameSize();
+
 
 public slots:
     void onButton(QAbstractButton *button);

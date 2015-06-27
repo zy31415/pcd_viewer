@@ -78,11 +78,11 @@ void TourDialog::onRec() {
 
     worker_->moveToThread(thread_);
 
-    connect(worker_, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(worker_, SIGNAL(finished()), this, SLOT(tourFinished()));
+    connect(worker_, SIGNAL(error(QString)), this, SLOT(errorString(QString)));    
     connect(thread_, SIGNAL(started()), worker_, SLOT(process()));
     connect(worker_, SIGNAL(finished()), thread_, SLOT(quit()));
     connect(worker_, SIGNAL(finished()), worker_, SLOT(deleteLater()));
+    connect(worker_, SIGNAL(finished()), this, SLOT(tourFinished()));
     connect(thread_, SIGNAL(finished()), thread_, SLOT(deleteLater()));
 
     if (getTourStyleSelection() == 0)
@@ -105,17 +105,21 @@ void TourDialog::onStop()
     locker.unlock();
 }
 
-void TourDialog::initRecording() {
+void TourDialog::initRecording()
+{
+    lockWindowFrameSize();
+    detectFrameSize();
 
     videoWriter_ = new cv::VideoWriter(
                 "video.avi",                    // filename
                 CV_FOURCC('D','I','V','X'),     // fourcc, http://www.fourcc.org/codecs.php
-                1,                             // fps
+                10,                             // fps
                 cv::Size(frame_width, frame_height), // frameSize
                 true);                          // isColor
 }
 
-void TourDialog::detectFrameSize(){
+void TourDialog::detectFrameSize()
+{
     QRect rect = pclViewer_->getSnapshotGeometry();
     QPixmap pixmap(rect.size());
     pclViewer_->renderASnapshot(pixmap, QPoint(), QRegion(rect));
@@ -185,8 +189,8 @@ void TourDialog::oneStepAroundY() {
         cv::Mat frame;
         frame = cv::imread(buffer, CV_LOAD_IMAGE_COLOR);   // Read the file
 
-        //assert(frame.size().width == frame_width);
-        //assert(frame.size().height == frame_height);
+        assert(frame.size().width == frame_width);
+        assert(frame.size().height == frame_height);
 
         videoWriter_->write(frame);
     }
@@ -198,8 +202,18 @@ int TourDialog::getTourStyleSelection() {
 }
 
 void TourDialog::tourFinished() {
-    //videoWriter_->release();
-    //delete videoWriter_;
+    videoWriter_->release();
+    delete videoWriter_;
     videoWriter_ = 0;
-    pclViewer_->enableResize();
+    unlockWindowFrameSize();
+}
+
+void TourDialog::lockWindowFrameSize() {
+    pclViewer_->setMaximumSize(pclViewer_->size());
+    pclViewer_->setMinimumSize(pclViewer_->size());
+}
+
+void TourDialog::unlockWindowFrameSize() {
+    pclViewer_->setMaximumSize(QSize(500000,500000));
+    pclViewer_->setMinimumSize(QSize(50,50));
 }
