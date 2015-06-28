@@ -4,7 +4,7 @@ project      (pcd_viewer)
 find_package (Qt4 REQUIRED)
 find_package (VTK REQUIRED)
 find_package (PCL 1.8.0 REQUIRED)
-find_package (OpenCV REQUIRED)
+find_package (OpenCV 2.4.11 REQUIRED)
 
 include_directories (${PCL_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 link_directories    (${PCL_LIBRARY_DIRS})
@@ -12,16 +12,16 @@ add_definitions     (${PCL_DEFINITIONS})
 
 set  (project_SOURCES main.cpp pcdviewermainwindow.cpp colordialog.cpp triangulationdialog.cpp
                 triangulation_meshes.cpp tourdialog.cpp boundingbox.cpp	worker.cpp
-                setcameradialog.cpp datamodel.cpp
+                setcameradialog.cpp datamodel.cpp helpdialog.cpp
         )
 
 set  (project_HEADERS pcdviewermainwindow.h colordialog.h triangulationdialog.h
                 triangulation_meshes.h setcameradialog.h boundingbox.h worker.h
-                setcameradialog.h tourdialog.h datamodel.h
+                setcameradialog.h tourdialog.h datamodel.h helpdialog.h
         )
 
 set  (project_FORMS pcdviewermainwindow.ui colordialog.ui triangulationdialog.ui
-                        setcameradialog.ui tourdialog.ui)
+                        setcameradialog.ui tourdialog.ui helpdialog.ui)
 
 set  (VTK_LIBRARIES vtkRendering vtkGraphics vtkHybrid QVTK)
 

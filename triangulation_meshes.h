@@ -21,7 +21,7 @@ struct TriangulationParameters {
 
     TriangulationParameters():
         k(20),
-        search_radius(0.025),
+        search_radius(1.),
         mu(2.5),
         max_NN(100),
         max_surface_angle(45.*PI/180.),

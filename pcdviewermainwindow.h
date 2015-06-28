@@ -107,6 +107,8 @@ public slots:
 
     void onSetCamera(std::vector<double>);
 
+    void onHelpInfo();
+
 
 private slots:
     void onSetCameraButtonPressed();

@@ -40,6 +40,16 @@ void TriangulationDialog::setParametersToDialog()
 
     ui->checkBox_if_plot_meshes->setChecked(data_->getIfShowMeshes());
 
+    // Set validator
+    ui->lineEdit_k->setValidator( new QIntValidator(0, 1000000, this));
+    ui->lineEdit_SearchRadius->setValidator( new QDoubleValidator(0, 1e99, 10, this));
+    ui->lineEdit_Mu->setValidator( new QDoubleValidator(0, 1e99, 10, this));
+    ui->lineEdit_MaxNN->setValidator( new QIntValidator(0, 1000000, this));
+    ui->lineEdit_MaxSurfaceAngle->setValidator( new QDoubleValidator(-360, 360, 10, this));
+    ui->lineEdit_MinAngle->setValidator( new QDoubleValidator(-360, 360, 10, this));
+    ui->lineEdit_MaximumAngle->setValidator( new QDoubleValidator(-360, 360, 10, this));
+
+
     setEnabled();
 }
 

@@ -9,7 +9,7 @@
 #include "worker.h"
 #include "setcameradialog.h"
 #include "colordialog.h"
-
+#include "helpdialog.h"
 
 PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     QMainWindow (parent),
@@ -31,11 +31,6 @@ PCDViewerMainWindow::PCDViewerMainWindow (QWidget *parent) :
     setUpQVTKWindow();
 
     connect_SIGNAL_SLOT();
-
-//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgb(data_->getCloud());
-//    viewer_->addPointCloud(data_->getCloud(), rgb, "cloud");
-//    viewer_->resetCamera();
-//    ui->qvtkWidget->update();
 
     onDrawCloudData();
 }
@@ -73,11 +68,16 @@ void PCDViewerMainWindow::connect_SIGNAL_SLOT() {
     // set camera position
     connect(ui->actionSet_Camera, SIGNAL(triggered()), this, SLOT(onSetCameraButtonPressed()));
 
+    // help info.
+    connect(ui->actionHelpInfo, SIGNAL(triggered(bool)), this, SLOT(onHelpInfo()));
+
     // connect DataModel to PCDViewerMainWindow, data changing signals
     connect(data_, SIGNAL(onDrawCloudData()), this, SLOT(onDrawCloudData()));
     connect(data_, SIGNAL(onDrawPointSize()), this, SLOT(onDrawPointSize()));
     connect(data_, SIGNAL(onIfShowDataPoints()), this, SLOT(onIfShowDataPoints()));
     connect(data_, SIGNAL(onDrawMeshes()), this, SLOT(onDrawMeshes()));
+
+
 
 }
 
@@ -259,4 +259,10 @@ void PCDViewerMainWindow::onDrawMeshes()
             viewer_ -> removePolygonMesh("meshes");
 
     ui->qvtkWidget->update();
+}
+
+void PCDViewerMainWindow::onHelpInfo()
+{
+    HelpDialog helpDialog(this);
+    helpDialog.exec();
 }

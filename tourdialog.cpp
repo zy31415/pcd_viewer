@@ -30,10 +30,15 @@ TourDialog::TourDialog(QWidget *parent) :
     pclViewer_ = (PCDViewerMainWindow*)parentWidget();
     viewer_ = pclViewer_->getViewer();
 
+    ui->lineEdit->setEnabled(false);
+
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onButton(QAbstractButton*)));
     connect(ui->pushButtonRec, SIGNAL(clicked()), this, SLOT(onRec()));
     connect(ui->pushButtonStop, SIGNAL(clicked()), this, SLOT(onStop()));
     connect(ui->pushButtonChoosePath, SIGNAL(clicked()), this, SLOT(onChooseFileButton()));
+
+    // enable lineEdit if Record checkbox is checked.
+    connect(ui->checkBox, SIGNAL(toggled(bool)), this, SLOT(onCheckBoxToggled()));
 
 
     ui->comboBox->addItem("Rotate around Y");
@@ -46,12 +51,14 @@ TourDialog::TourDialog(QWidget *parent) :
 
 }
 
-TourDialog::~TourDialog() {
+TourDialog::~TourDialog()
+{
     delete ui;
     delete videoWriter_;
 }
 
-void TourDialog::onButton(QAbstractButton *button) {
+void TourDialog::onButton(QAbstractButton *button)
+{
     QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
 
     switch(standardButton) {
@@ -68,7 +75,8 @@ void TourDialog::onButton(QAbstractButton *button) {
     }
 }
 
-void TourDialog::onRec() {
+void TourDialog::onRec()
+{
     int _num_worker = 0;
 
     locker.lockForRead();
@@ -329,4 +337,9 @@ void TourDialog::onChooseFileButton(){
                 filter, &filter);
     ui->lineEdit->setText(filename);
 
+}
+
+void TourDialog::onCheckBoxToggled(){
+    ui->lineEdit->setEnabled(ui->checkBox->isChecked());
+    ui->pushButtonChoosePath->setEnabled(ui->checkBox->isChecked());
 }

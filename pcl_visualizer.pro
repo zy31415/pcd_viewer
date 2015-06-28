@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     worker.cpp \
     setcameradialog.cpp \
     datamodel.cpp \
-    pcdviewermainwindow.cpp
+    pcdviewermainwindow.cpp \
+    helpdialog.cpp
 
 HEADERS  += \
     colordialog.h \
@@ -33,14 +34,16 @@ HEADERS  += \
     worker.h \
     setcameradialog.h \
     datamodel.h \
-    pcdviewermainwindow.h
+    pcdviewermainwindow.h \
+    helpdialog.h
 
 FORMS    += \
     colordialog.ui \
     triangulationdialog.ui \
     setcameradialog.ui \
     tourdialog.ui \
-    pcdviewermainwindow.ui
+    pcdviewermainwindow.ui \
+    helpdialog.ui
 
 RESOURCES += \
     resources.qrc

@@ -78,6 +78,8 @@ public slots:
 
     void onChooseFileButton();
 
+    void onCheckBoxToggled();
+
 
 
 signals:
