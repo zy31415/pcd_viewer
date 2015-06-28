@@ -6,6 +6,9 @@
 #include "boundingbox.h"
 #include "triangulation_meshes.h"
 
+/**
+ * @brief Used to store application data (Model-view-controller architectural pattern).
+ */
 class DataModel : public QObject
 {
     Q_OBJECT

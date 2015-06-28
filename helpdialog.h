@@ -7,6 +7,9 @@ namespace Ui {
 class HelpDialog;
 }
 
+/**
+ * @brief Dialog for help information.
+ */
 class HelpDialog : public QDialog
 {
     Q_OBJECT

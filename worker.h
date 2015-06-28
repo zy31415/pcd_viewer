@@ -9,6 +9,9 @@
 
 #include "boundingbox.h"
 
+/**
+ * @brief This class cooperates with the TourDialog to do the scene rotation
+ */
 class Worker : public QObject
 {
     Q_OBJECT

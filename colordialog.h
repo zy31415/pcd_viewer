@@ -14,6 +14,9 @@ namespace Ui {
   class ColorDialog;
 }
 
+/**
+ * @brief This dialog is used to set the coloring mode.
+ */
 class ColorDialog : public QDialog {
     Q_OBJECT
 

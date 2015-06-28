@@ -30,6 +30,9 @@ namespace Ui {
   class PCDViewerMainWindow;
 }
 
+/**
+ * @brief Main window; also is the controller of the  program.
+ */
 class PCDViewerMainWindow : public QMainWindow {
     Q_OBJECT
 

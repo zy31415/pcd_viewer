@@ -14,6 +14,9 @@ namespace Ui {
 class SetCameraDialog;
 }
 
+/**
+ * @brief Dialog for setting the camera.
+ */
 class SetCameraDialog : public QDialog
 {
     Q_OBJECT

@@ -21,6 +21,9 @@ namespace Ui {
     class TourDialog;
 }
 
+/**
+ * @brief Dialog for taking a tour of the data.
+ */
 class TourDialog : public QDialog
 {
     Q_OBJECT

@@ -9,6 +9,9 @@
 
 #define PI 3.1415926
 
+/**
+ * @brief Parameters for the triangulation.
+ */
 struct TriangulationParameters {
     int k;
     double search_radius;
@@ -42,10 +45,22 @@ struct TriangulationParameters {
     }
 };
 
+
+/**
+ * @brief convert PointXYZRGBA to PointXYZ
+ * @param cloud
+ * @return
+ */
 pcl::PointCloud<pcl::PointXYZ>::Ptr
 copy_PointXYZRGBA_to_PointXYZ
 (pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud);
 
+/**
+ * @brief Do triangulation and caculate meshes.
+ * @param cloud_
+ * @param meshes_
+ * @param par
+ */
 void compute_triangulation_meshes(
         const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_,
         pcl::PolygonMesh::Ptr meshes_,

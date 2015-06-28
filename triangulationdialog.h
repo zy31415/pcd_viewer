@@ -19,6 +19,9 @@ namespace Ui {
 class TriangulationDialog;
 }
 
+/**
+ * @brief Dialog for plotting meshes.
+ */
 class TriangulationDialog : public QDialog
 {
     Q_OBJECT

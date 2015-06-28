@@ -4,6 +4,9 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
+/**
+ * @brief Represent the bounding box of the loaded point cloud data.
+ */
 class BoundingBox
 {
 private:
