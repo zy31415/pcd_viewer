@@ -14,6 +14,7 @@ SetCameraDialog::SetCameraDialog(
     connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
             this, SLOT(onButton(QAbstractButton*)));
 
+    // set current value
     ui->pos_x->setText(QString::number(camera.pos[0]));
     ui->pos_y->setText(QString::number(camera.pos[1]));
     ui->pos_z->setText(QString::number(camera.pos[2]));
@@ -25,6 +26,19 @@ SetCameraDialog::SetCameraDialog(
     ui->up_x->setText(QString::number(camera.view[0]));
     ui->up_y->setText(QString::number(camera.view[1]));
     ui->up_z->setText(QString::number(camera.view[2]));
+
+    // set validator
+    ui->pos_x->setValidator( new QDoubleValidator(this));
+    ui->pos_y->setValidator( new QDoubleValidator(this));
+    ui->pos_z->setValidator( new QDoubleValidator(this));
+
+    ui->view_x->setValidator( new QDoubleValidator(this));
+    ui->view_y->setValidator( new QDoubleValidator(this));
+    ui->view_z->setValidator( new QDoubleValidator(this));
+
+    ui->up_x->setValidator( new QDoubleValidator(this));
+    ui->up_y->setValidator( new QDoubleValidator(this));
+    ui->up_z->setValidator( new QDoubleValidator(this));
 
 }
 
