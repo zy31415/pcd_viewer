@@ -154,8 +154,14 @@ void DataModel::readPCDFile(const QString filename)
 
     colorPCDAlongAxis ();
 
+    if_show_data_points = true;
+
+    if_show_meshes = false;
+
     // Tell the MainWindow to update the viewer.
+    emit onDrawMeshes(); // remove meshes.
     emit onDrawCloudData();
+
 }
 
 
